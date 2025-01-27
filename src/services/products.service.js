@@ -32,6 +32,17 @@ class ProductsService {
     return updatedProduct
   }
 
+  async countByModel(modelo) {
+    const count = await models.Product.count({
+      where: {
+        modelo,
+        disponible: true
+      }
+    })
+
+    return { modelo, disponibles: count }
+  }
+
   
 }
 

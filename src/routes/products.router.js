@@ -25,6 +25,16 @@ router.get('/:serie',
     }
 )
 
+router.get('/count/:modelo', async (req, res, next) => {
+    try {
+        const { modelo } = req.params
+        const result = await service.countByModel(modelo)
+        res.json(result)
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 router.post('/',
     validatorHandler(createproductSchema, 'body'),
