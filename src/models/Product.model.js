@@ -3,7 +3,7 @@ const { DataTypes, Model } = require('sequelize')
 const PRODUCT_TABLE = 'productos'
 
 const ProductSchema = {
-    numero_serie: {
+    serie: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true,
@@ -30,6 +30,11 @@ const ProductSchema = {
     fecha_salida: {
         type: DataTypes.DATE,
     },
+    disponible: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
 }
 
 

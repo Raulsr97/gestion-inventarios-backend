@@ -5,8 +5,9 @@ const modelo = Joi.string()
 const tipo = Joi.string()
 const proveedor = Joi.string()
 const cliente = Joi.string()
-const fechaEntrada = Joi.date()
-const fechaSalida = Joi.date()
+const fechaEntrada = Joi.date().iso()
+const fechaSalida = Joi.date().iso()
+
 
 // Producto agregado
 const createproductSchema = Joi.object({
@@ -14,14 +15,13 @@ const createproductSchema = Joi.object({
   modelo: modelo.required(),
   tipo: tipo.required(),
   proveedor: proveedor.required(),
-  fechaEntrada: fechaEntrada.required()
+  fecha_entrada: fechaEntrada.required(),
+  
 });
 
 // Dar salida al producto
 const updateProductSchema = Joi.object({
-    serie: serie.required(),
-    fechaSalida: fechaSalida.required(),
-    cliente: cliente.optional()
+    cliente: cliente.optional(),
 })
 
 // Consultar un producto en especifico
