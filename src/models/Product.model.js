@@ -17,7 +17,7 @@ const ProductSchema = {
         type: DataTypes.STRING,
     },
     proveedor: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING, 
     },
     cliente: {
         type: DataTypes.STRING,

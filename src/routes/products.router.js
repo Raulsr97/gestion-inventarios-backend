@@ -1,7 +1,7 @@
 const express = require('express');
 const ProductsService = require('../services/products.service');
 const validatorHandler = require('../../middlewares/validator.handler')
-const { getProductSchema, updateProductSchema, createproductSchema, deleteProductSchema} = require('../schemas/product.schema')
+const { getProductSchema, updateProductSchema, createproductSchema } = require('../schemas/product.schema')
 
 const router = express.Router();
 const service = new ProductsService()
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
         const products = await service.find()
         res.json(products)
     } catch (error) {
-        next(error)
+        res.json({ message: 'Error al obtener los productos'})
     }
 });
 
@@ -35,6 +35,17 @@ router.get('/count/:modelo', async (req, res, next) => {
     }
 })
 
+router.get('/salidos', async (req, res) => {
+    try {
+        const products = await service.offProducts()
+        if(products.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron productos que ya hayan salido'})
+        }
+        res.status(200).json(products)
+    } catch (err) {
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+})
 
 router.post('/',
     validatorHandler(createproductSchema, 'body'),

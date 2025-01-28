@@ -15,7 +15,9 @@ app.use(bodyParser.json());
 
 // Rutas
 const productsRoutes = require('./routes/products.router');
+const salidasRoutes = require('./routes/salidas.router')
 app.use('/api/products', productsRoutes);
+app.use('/api/salidas', salidasRoutes)
 
 // middlewares de error
 app.use(logErrors)

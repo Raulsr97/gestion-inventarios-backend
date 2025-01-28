@@ -43,6 +43,18 @@ class ProductsService {
     return { modelo, disponibles: count }
   }
 
+  async offProducts() {
+    const products = await models.Product.findAll({
+      where: {
+        fecha_salida: {
+          [Op.not]: null // Filtrar donde fecha de salida no sea NULL
+        }
+      }
+    })
+    console.log('Productos encontrados:', JSON.stringify(products, null, 2)); // Mostrar los productos como JSON bien formateado
+    return products
+  }
+
   
 }
 
