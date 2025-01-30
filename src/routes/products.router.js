@@ -35,18 +35,6 @@ router.get('/count/:modelo', async (req, res, next) => {
     }
 })
 
-router.get('/salidos', async (req, res) => {
-    try {
-        const products = await service.offProducts()
-        if(products.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron productos que ya hayan salido'})
-        }
-        res.status(200).json(products)
-    } catch (err) {
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-})
-
 router.post('/',
     validatorHandler(createproductSchema, 'body'),
     async (req, res, next) => {
