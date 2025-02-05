@@ -10,14 +10,14 @@ class ImpresoraService {
     }
 
     async registrarLote(data) {
-        const { modelo, proveedor, estado, tipo, ubicacion, cliente_id, proyecto_id, tiene_accesorios, series } = data;
+        const { modelo, marca, estado, tipo, ubicacion, cliente_id, proyecto_id, tiene_accesorios, series } = data;
 
         const impresoras = series.map(serie => ({
             serie,
             modelo,
-            proveedor: proveedor || null,
+            marca,
             estado: estado || 'Nueva',
-            tipo: tipo || 'Propia',
+            tipo,
             ubicacion: ubicacion || 'Almacén',
             cliente_id: cliente_id || null,
             proyecto_id: proyecto_id || null,
