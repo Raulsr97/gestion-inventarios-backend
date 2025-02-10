@@ -9,9 +9,15 @@ const ImpresoraSchema = {
         primaryKey: true,
         unique: true
     },
-    marca: {
-        type: DataTypes.STRING,
-        allowNull: false
+    marca_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'marcas', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     },
     modelo: {
         type: DataTypes.STRING,
@@ -78,6 +84,9 @@ class Impresora extends Model {
 
         // Relación con proyectos (si aplica)
         this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto' });
+
+        // Relacion con marcas
+        this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' });
     }
 
     static config(sequelize) {

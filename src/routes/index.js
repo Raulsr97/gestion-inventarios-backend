@@ -5,6 +5,7 @@ const impresoraRoutes = require('./impresora.router')
 const tonerRoutes = require('./toner.router')
 const refaccionRoutes = require('./refaccion.router')
 const unidadImagenRoutes = require('./unidadImagen.router')
+const marcaRoutes = require('./marca.router')
 
 function routerApi(app) {
     const router = express.Router();
@@ -15,7 +16,7 @@ function routerApi(app) {
     router.use('/toners', tonerRoutes);
     router.use('/refacciones', refaccionRoutes);
     router.use('/unidades-imagen', unidadImagenRoutes);
-
+    router.use('/marcas',marcaRoutes)
 }
 
 module.exports = routerApi;

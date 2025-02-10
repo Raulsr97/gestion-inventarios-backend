@@ -13,6 +13,16 @@ const TonerSchema = {
         allowNull: false,
         unique: true
     },
+    marca_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'marcas', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+    },
     modelo: {
         type: DataTypes.STRING,
         allowNull: false
@@ -37,6 +47,7 @@ const TonerSchema = {
 class Toner extends Model {
     static associate(models) {
         this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' });
+        this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' });
     }
 
     static config(sequelize) {
