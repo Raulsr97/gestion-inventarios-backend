@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const { models } = require('../config/db');
 
 class ImpresoraService {
@@ -62,6 +62,35 @@ class ImpresoraService {
             })
         )
     }
+
+    async obtenerMovimientosdelMes() {
+      const ahora = new Date() // Obtenemos la fecha actual
+      const mesActual = ahora.getMonth() + 1 // Los meses en Javascript van de 0 a 11, sumamos 1 para obtener el mes corecto
+      const anioActual = ahora.getFullYear() // Obtenemos el año actual
+
+      // Filtrar impresoras con fecha de entrada en este mes
+      const entradas = await models.Impresora.count({
+        where: {
+          fecha_entrada: {
+            [Op.gte]: new Date(anioActual, mesActual -1, 1), // Desde el 1 del mes actual
+            [Op.lt]: new Date(anioActual, mesActual, 1) // Hasta el 1 del siguiente mes
+          }
+        }
+      })
+
+      // Filtar impresoras con fecha de salida en este mes
+      const salidas = await models.Impresora.count({
+        where: {
+          fecha_salida: {
+            [Op.gte]: new Date(anioActual, mesActual - 1, 1),
+            [Op.lt]: new Date(anioActual, mesActual, 1)
+          }
+        }
+      })
+
+      return { entradas, salidas }
+    }
+
 }
 
 module.exports = new ImpresoraService();

@@ -23,6 +23,15 @@ router.get('/almacen-por-proyecto', async (req, res, next) => {
     }
 })
 
+router.get('/movimientos-mes', async (req, res, next) => {
+    try {
+        const movimientos = await ImpresoraService.obtenerMovimientosdelMes()
+        res.json(movimientos)
+    } catch (error) {
+        next(error)
+    }
+})
+
 router.post('/', validatorHandler(crearImpresoraSchema, 'body'), async (req, res, next) => {
     try {
         const nuevaImpresora = await ImpresoraService.crearImpresora(req.body);
