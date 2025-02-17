@@ -23,6 +23,15 @@ router.get('/almacen-por-proyecto', async (req, res, next) => {
     }
 })
 
+router.get('/almacen-por-cliente', async (req, res, next) => {
+    try {
+        const datos = await ImpresoraService.contarPorCliente()
+        res.json(datos)
+    } catch (error) {
+       next(error) 
+    }
+})
+
 router.get('/movimientos-mes', async (req, res, next) => {
     try {
         const movimientos = await ImpresoraService.obtenerMovimientosdelMes()

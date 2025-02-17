@@ -3,7 +3,25 @@ const { models } = require('../config/db');
 
 class ImpresoraService {
     async obtenerImpresoras() {
-        return await models.Impresora.findAll();
+        return await models.Impresora.findAll({
+          include: [
+            {
+              model: models.Marca,
+              as: 'marca',
+              attributes: ['nombre']
+            },
+            {
+              model: models.Cliente,
+              as: 'cliente',
+              attributes: ['nombre']
+            },
+            {
+              model: models.Proyecto,
+              as: 'proyecto',
+              attributes: ['nombre']
+            }
+          ]
+        });
     }
 
     async crearImpresora(data) {
@@ -61,6 +79,31 @@ class ImpresoraService {
                 cantidad: item.getDataValue('cantidad')
             })
         )
+    }
+
+    async contarPorCliente () {
+      const resultados = await models.Impresora.findAll({
+        attributes: [
+          'cliente_id', 
+          [Sequelize.fn('COUNT', Sequelize.col('id')), 'cantidad']
+        ],
+        where: { ubicacion: 'Almacén'},
+        group: ['cliente_id'],
+        include: [
+          {
+            model: models.Cliente,
+            as: 'cliente',
+            attributes: ['nombre']
+          }
+        ]
+      })
+
+      return resultados
+        .filter(item => item.cliente)
+        .map(item => ({
+        cliente: item.cliente.nombre,
+        cantidad: item.getDataValue('cantidad')
+        }))
     }
 
     async obtenerMovimientosdelMes() {
