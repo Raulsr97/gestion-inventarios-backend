@@ -1,8 +1,8 @@
-const { DataTypes, Models} = require('sequelize')
+const { DataTypes, Model} = require('sequelize')
 
 const EMPRESA_TABLE = 'empresas'
 
-const empresaSchema = {
+const EmpresaSchema = {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -17,7 +17,7 @@ const empresaSchema = {
     } 
 }
 
-class Empresa extends Models {
+class Empresa extends Model {
     static associate(models) {
       this.hasMany(models.Impresora, {foreignKey: 'empresa_id',  as: 'impresoras' })
 
@@ -33,4 +33,4 @@ class Empresa extends Models {
     }
 }
 
-module.exports = { Empresa, EMPRESA_TABLE, empresaSchema}
+module.exports = { Empresa, EMPRESA_TABLE, EmpresaSchema}
