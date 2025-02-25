@@ -41,7 +41,7 @@ const ImpresoraSchema = {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'clientes', // Asegúrate de que la tabla `clientes` exista
+            model: 'clientes', 
             key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -74,6 +74,16 @@ const ImpresoraSchema = {
     fecha_entrega_final: {
         type: DataTypes.DATE,
         allowNull: true,
+    },
+    empresa_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'empresas', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
@@ -85,8 +95,19 @@ class Impresora extends Model {
         // Relación con proyectos (si aplica)
         this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto' });
 
+        // Relacion con marcas (si aplica)
+        this.belongsTo(models.Empresa, {foreignKey: 'empresa_id', as: 'empresa'})
+
         // Relacion con marcas
         this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' });
+
+        // Relacion con remisiones a traves de la tabla intermedia
+        this.belongsToMany(models.Remision, {
+            through: 'remision_impresoras',
+            foreignKey: 'serie',
+            otherKey: 'numero_remision',
+            as: 'remisiones'
+        })
     }
 
     static config(sequelize) {

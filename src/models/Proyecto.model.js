@@ -16,7 +16,9 @@ const ProyectoSchema = {
 
 class Proyecto extends Model {
     static associate(models) {
-        this.hasMany(models.Impresora, { foreignKey: 'proyecto_id', as: 'impresoras' });
+        this.hasMany(models.Impresora, { foreignKey: 'proyecto_id', as: 'impresoras' })
+        this.hasMany(models.Remision, {foreignKey: 'proyecto_id', as: 'remisiones'})
+
     }
 
     static config(sequelize) {

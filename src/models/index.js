@@ -5,6 +5,11 @@ const { Toner, TonerSchema} = require('./Toner.model')
 const { UnidadImagen, UnidadImagenSchema} = require('./UnidadImagen.model')
 const { Refaccion, RefaccionSchema} = require('./Refaccion.model')
 const { Marca, MarcaSchema} = require('./Marca.model')
+const { Empresa, EmpresaSchema } = require('./Empresa.model')
+const { Remision, RemisionSchema } = require('./Remision.model')
+const { RemisionImpresora, RemisionImpresoraSchema } = require('./RemisionImpresora.model')
+
+
 
 
 function setupModels(sequelize) {
@@ -15,6 +20,9 @@ function setupModels(sequelize) {
     Refaccion.init(RefaccionSchema, Refaccion.config(sequelize))
     UnidadImagen.init(UnidadImagenSchema, UnidadImagen.config(sequelize))
     Marca.init(MarcaSchema, Marca.config(sequelize))
+    Empresa.init(EmpresaSchema, Empresa.config(sequelize))
+    Remision.init(RemisionSchema, Remision.config(sequelize))
+    RemisionImpresora.init(RemisionImpresoraSchema, RemisionImpresora.config(sequelize))
 
     Impresora.associate(sequelize.models)
     Cliente.associate(sequelize.models)
@@ -23,6 +31,9 @@ function setupModels(sequelize) {
     Refaccion.associate(sequelize.models)
     UnidadImagen.associate(sequelize.models)
     Marca.associate(sequelize.models)
+    Empresa.associate(sequelize.models)
+    Remision.associate(sequelize.models)
+    RemisionImpresora.associate(sequelize.models)
 }
 
 module.exports = setupModels
