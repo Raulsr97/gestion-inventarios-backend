@@ -18,6 +18,8 @@ class Proyecto extends Model {
     static associate(models) {
         this.hasMany(models.Impresora, { foreignKey: 'proyecto_id', as: 'impresoras' })
         this.hasMany(models.Remision, {foreignKey: 'proyecto_id', as: 'remisiones'})
+        this.hasMany(models.Toner, { foreignKey: 'proyecto_id', as: 'toners'})
+        this.hasMany(models.UnidadImagen, { foreignKey: 'proyecto_id', as: 'unidadesimg'})
 
     }
 

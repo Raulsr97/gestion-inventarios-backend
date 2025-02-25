@@ -18,7 +18,8 @@ class Cliente extends Model {
     static associate(models) {
         this.hasMany(models.Impresora, { foreignKey: 'cliente_id', as: 'impresoras' })
         this.hasMany(models.Remision, {foreignKey: 'cliente_id', as: 'remisiones'})
-
+        this.hasMany(models.Toner, { foreignKey: 'cliente_id', as: 'toners'})
+        this.hasMany(models.UnidadImagen, { foreignKey: 'cliente_id', as: 'unidadesimg'})
     }
 
     static config(sequelize) {

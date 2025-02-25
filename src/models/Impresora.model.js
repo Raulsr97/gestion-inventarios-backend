@@ -29,13 +29,13 @@ const ImpresoraSchema = {
         defaultValue: 'Nueva'
     },
     tipo: {
-        type: DataTypes.ENUM('Propia', 'Proyecto'),
+        type: DataTypes.ENUM('Compra', 'Distribucion'),
         allowNull: false
     },
     ubicacion: {
-        type: DataTypes.ENUM('Almacén', 'Cliente', 'Devuelto al fabricante'),
+        type: DataTypes.ENUM('Almacen', 'Cliente', 'Devuelto al proveedor'),
         allowNull: false,
-        defaultValue: 'Almacén'
+        defaultValue: 'Almacen'
     },
     cliente_id: {
         type: DataTypes.INTEGER,
@@ -51,7 +51,7 @@ const ImpresoraSchema = {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'proyectos', // Asegúrate de que la tabla `proyectos` exista
+            model: 'proyectos', 
             key: 'id'
         },
         onUpdate: 'CASCADE',

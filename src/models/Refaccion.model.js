@@ -17,16 +17,57 @@ const RefaccionSchema = {
         allowNull: false,
         defaultValue: 1
     },
+    cliente_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'clientes',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+    },
+    proyecto_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'proyectos', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+    },
     fecha_ingreso: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
+    },
+    fecha_salida: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    fecha_entrega_final: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    empresa_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'empresas', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
 class Refaccion extends Model {
     static associate(models) {
-        // No está vinculada directamente con clientes, pero podría relacionarse con pedidos en el futuro.
+        this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' })
+        this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto'})
+        this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' })
+        this.belongsTo(models.Empresa, { foreignKey: 'empresa_id', as: 'empresa'})
     }
 
     static config(sequelize) {

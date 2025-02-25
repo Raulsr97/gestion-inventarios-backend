@@ -70,6 +70,20 @@ class Remision extends Model {
       otherKey: 'serie',
       as: 'impresoras'
     })
+
+    this.belongsToMany(models.Toner, {
+      through: 'remision_toners',
+      foreignKey: 'numero_remision',
+      otherKey: 'serie',
+      as: 'toners'
+    })
+
+    this.belongsToMany(models.UnidadImagen, {
+      through: 'remision_unidadesimg',
+      foreignKey: 'numero_remision',
+      otherKey: 'serie',
+      as: 'unidadesimg'
+    })
   }
 
   static config(sequelize) {
