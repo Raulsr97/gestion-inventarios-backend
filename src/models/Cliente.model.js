@@ -10,16 +10,26 @@ const ClienteSchema = {
     },
     nombre: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     }
 };
 
 class Cliente extends Model {
     static associate(models) {
+        this.hasMany(models.Proyecto, { foreignKey: 'cliente_id', as: 'proyectos' })
         this.hasMany(models.Impresora, { foreignKey: 'cliente_id', as: 'impresoras' })
         this.hasMany(models.Remision, {foreignKey: 'cliente_id', as: 'remisiones'})
         this.hasMany(models.Toner, { foreignKey: 'cliente_id', as: 'toners'})
         this.hasMany(models.UnidadImagen, { foreignKey: 'cliente_id', as: 'unidadesimg'})
+        this.hasMany(models.Refaccion, { foreignKey: 'cliente_id', as: 'refacciones'})
+
+        this.belongsToMany(models.Empresa, {
+            through: 'empresa_clientes',
+            foreignKey: 'cliente_id',
+            otherKey: 'empresa_id',
+            as: 'empresas'
+        })
     }
 
     static config(sequelize) {

@@ -20,7 +20,18 @@ const EmpresaSchema = {
 class Empresa extends Model {
     static associate(models) {
       this.hasMany(models.Impresora, {foreignKey: 'empresa_id',  as: 'impresoras' })
+      this.hasMany(models.Toner, {foreignKey: 'empresa_id', as: 'toners'})
+      this.hasMany(models.UnidadImagen, {foreignKey: 'empresa_id', as: 'unidadesimg'})
+      this.hasMany(models.Refaccion, {foreignKey: 'empresa_id', as: 'refacciones'})
       this.hasMany(models.Remision, {foreignKey: 'empresa_id', as: 'remisiones'})
+
+
+      this.belongsToMany(models.Cliente, {
+        through: 'empresa_clientes',
+        foreignKey: 'empresa_id',
+        otherKey: 'cliente_id',
+        as: 'clientes'
+    });
     }
 
     static config(sequelize) {

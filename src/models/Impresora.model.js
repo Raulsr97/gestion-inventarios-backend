@@ -33,9 +33,21 @@ const ImpresoraSchema = {
         allowNull: false
     },
     ubicacion: {
-        type: DataTypes.ENUM('Almacen', 'Cliente', 'Devuelto al proveedor'),
+        type: DataTypes.ENUM('Almacen', 'Entregado', 'Devuelto al proveedor'),
         allowNull: false,
         defaultValue: 'Almacen'
+    },
+    flujo: {  
+        type: DataTypes.ENUM('Recolección', 'Distribución'),
+        allowNull: true
+    },
+    origen_recoleccion: { 
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    destino_distribucion: {
+        type: DataTypes.STRING,
+        allowNull: true
     },
     cliente_id: {
         type: DataTypes.INTEGER,
@@ -90,16 +102,16 @@ const ImpresoraSchema = {
 class Impresora extends Model {
     static associate(models) {
         // Relación con clientes (si aplica)
-        this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' });
+        this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' })
 
         // Relación con proyectos (si aplica)
-        this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto' });
+        this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto' })
 
         // Relacion con marcas (si aplica)
         this.belongsTo(models.Empresa, {foreignKey: 'empresa_id', as: 'empresa'})
 
         // Relacion con marcas
-        this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' });
+        this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' })
 
         // Relacion con remisiones a traves de la tabla intermedia
         this.belongsToMany(models.Remision, {
@@ -107,6 +119,13 @@ class Impresora extends Model {
             foreignKey: 'serie',
             otherKey: 'numero_remision',
             as: 'remisiones'
+        })
+
+        this.belongsToMany(models.Accesorio, {
+            through: 'impresora_accesorios',
+            foreignKey: 'serie',
+            otherKey: 'accesorio_id',
+            as: 'accesorios'
         })
     }
 
