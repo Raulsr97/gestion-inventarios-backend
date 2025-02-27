@@ -59,6 +59,16 @@ const RefaccionSchema = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+    },
+    proveedor_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'proveedores', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
@@ -68,6 +78,14 @@ class Refaccion extends Model {
         this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto'})
         this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' })
         this.belongsTo(models.Empresa, { foreignKey: 'empresa_id', as: 'empresa'})
+        this.belongsTo(models.Proveedor, {foreignKey: 'proveedor_id', as: 'proveedor'})
+
+        this.belongsToMany(models.Remision, {
+            through: 'remision_refacciones',
+            foreignKey: 'refaccion_id',
+            otherKey: 'numero_remision',
+            as: 'remisiones'
+        })
     }
 
     static config(sequelize) {

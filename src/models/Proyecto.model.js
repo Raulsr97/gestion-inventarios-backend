@@ -21,6 +21,7 @@ class Proyecto extends Model {
         this.hasMany(models.Toner, { foreignKey: 'proyecto_id', as: 'toners'})
         this.hasMany(models.UnidadImagen, { foreignKey: 'proyecto_id', as: 'unidadesimg'})
 
+        this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' })
     }
 
     static config(sequelize) {

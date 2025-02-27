@@ -96,6 +96,16 @@ const ImpresoraSchema = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+    },
+    proveedor_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'proveedores', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
@@ -107,11 +117,14 @@ class Impresora extends Model {
         // Relación con proyectos (si aplica)
         this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto' })
 
-        // Relacion con marcas (si aplica)
+        // Relacion con empresa (si aplica)
         this.belongsTo(models.Empresa, {foreignKey: 'empresa_id', as: 'empresa'})
 
         // Relacion con marcas
         this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' })
+
+        // Relacion con proovedores
+        this.belongsTo(models.Proveedor, {foreignKey: 'proveedor_id', as: 'proveedor'})
 
         // Relacion con remisiones a traves de la tabla intermedia
         this.belongsToMany(models.Remision, {

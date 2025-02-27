@@ -1,8 +1,9 @@
 const { Model, DataTypes} = require('sequelize')
+const { Refaccion } = require('./Refaccion.model')
 
-const REMISION_UNIDADIMG_TABLE = 'remision_unidadesimg'
+const REMISION_REFACCION_TABLE = 'remision_refacciones'
 
-const RemisionUnidadImgSchema = {
+const RemisionRefaccionSchema = {
     numero_remision: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -14,34 +15,38 @@ const RemisionUnidadImgSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      serie: {
-        type: DataTypes.STRING,
+      refaccion_id: {
+        type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'unidadesimg',
+          model: 'toners',
           key: 'serie',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+    },
 }
 
-class RemisionUnidadImg extends Model {
+class RemisionRefaccion extends Model {
     static associate(models) {
         this.belongsTo(models.Remision, { foreignKey: 'numero_remision', as: 'remision' })
-        this.belongsTo(models.Impresora, { foreignKey: 'serie', as: 'unidadimg' })
+        this.belongsTo(models.Impresora, { foreignKey: 'refaccion_id', as: 'refaccion' })
     }
 
     static config(sequelize) {
         return {
             sequelize,
-            tableName: REMISION_UNIDADIMG_TABLE,
-            modelName: 'RemisionUnidadImg',
+            tableName: REMISION_REFACCION_TABLE,
+            modelName: 'RemisionRefaccion',
             timestamps: false,
         }
     }
 }
 
-module.exports = { RemisionUnidadImg, REMISION_UNIDADIMG_TABLE, RemisionUnidadImgSchema }
-
+module.exports = { RemisionRefaccion, REMISION_REFACCION_TABLE, RemisionRefaccionSchema }

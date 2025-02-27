@@ -84,6 +84,13 @@ class Remision extends Model {
       otherKey: 'serie',
       as: 'unidadesimg'
     })
+
+    this.belongsToMany(models.Refaccion, {
+      through: 'remision_refacciones',
+      foreignKey: 'numero_remision',
+      otherKey: 'refaccion_id',
+      as: 'refacciones'
+  })
   }
 
   static config(sequelize) {

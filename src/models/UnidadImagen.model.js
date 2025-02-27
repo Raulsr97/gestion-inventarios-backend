@@ -74,6 +74,16 @@ const UnidadImagenSchema = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+    },
+    proveedor_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'proveedores', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
@@ -83,6 +93,7 @@ class UnidadImagen extends Model {
         this.belongsTo(models.Proyecto, { foreignKey: 'proyecto_id', as: 'proyecto'})
         this.belongsTo(models.Marca, { foreignKey: 'marca_id', as: 'marca' })
         this.belongsTo(models.Empresa, { foreignKey: 'empresa_id', as: 'empresa'})
+        this.belongsTo(models.Proveedor, {foreignKey: 'proveedor_id', as: 'proveedor'})
 
         this.belongsToMany(models.Remision, {
             through: 'remision_unidadesimg', 
