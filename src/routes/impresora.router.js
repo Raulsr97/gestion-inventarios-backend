@@ -52,7 +52,7 @@ router.post('/', validatorHandler(crearImpresoraSchema, 'body'), async (req, res
 
 router.post('/registrar-lote', async (req, res, next) => {
     try {
-        const { modelo, marca_id, estado, tipo, ubicacion, cliente_id, proyecto_id, tiene_accesorios, series } = req.body;
+        const { modelo, marca_id, estado, tipo, ubicacion, cliente_id, proyecto_id, proveedor_id, tiene_accesorios, series } = req.body;
 
         if (!series || !Array.isArray(series) || series.length === 0) {
             return res.status(400).json({ message: "Debe proporcionar al menos un número de serie." });
@@ -66,6 +66,7 @@ router.post('/registrar-lote', async (req, res, next) => {
             ubicacion,
             cliente_id,
             proyecto_id,
+            proveedor_id,
             tiene_accesorios,
             series
         });
