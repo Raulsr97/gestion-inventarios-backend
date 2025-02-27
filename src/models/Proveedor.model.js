@@ -21,7 +21,7 @@ class Proveedor extends Model {
     static associate(models) {
       this.hasMany(models.Impresora, {foreignKey: 'proveedor_id',  as: 'impresoras' })
       this.hasMany(models.Toner, {foreignKey: 'proveedor_id', as: 'toners'})
-      this.hasMany(models.UnidadImagen, {foreignKey: 'proveedor_id', as: 'unidadesimg'})
+      this.hasMany(models.UnidadImagen, {foreignKey: 'proveedor_id', as: 'unidades_imagen'})
       this.hasMany(models.Refaccion, {foreignKey: 'proveedor_id', as: 'refacciones'})
     }
 

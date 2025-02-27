@@ -18,7 +18,7 @@ class Marca extends Model {
     static associate(models) {
         this.hasMany(models.Impresora, { foreignKey: 'marca_id', as: 'impresoras' })
         this.hasMany(models.Toner, { foreignKey: 'marca_id', as: 'toners' })
-        this.hasMany(models.UnidadImagen, { foreignKey: 'marca_id', as: 'unidadesImagen' })
+        this.hasMany(models.UnidadImagen, { foreignKey: 'marca_id', as: 'unidades_imagen' })
         this.hasMany(models.Refaccion, { foreignKey: 'marca_is', as: 'refacciones' })
     }
 

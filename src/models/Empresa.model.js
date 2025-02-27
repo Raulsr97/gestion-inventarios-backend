@@ -21,7 +21,7 @@ class Empresa extends Model {
     static associate(models) {
       this.hasMany(models.Impresora, {foreignKey: 'empresa_id',  as: 'impresoras' })
       this.hasMany(models.Toner, {foreignKey: 'empresa_id', as: 'toners'})
-      this.hasMany(models.UnidadImagen, {foreignKey: 'empresa_id', as: 'unidadesimg'})
+      this.hasMany(models.UnidadImagen, {foreignKey: 'empresa_id', as: 'unidades_imagen'})
       this.hasMany(models.Refaccion, {foreignKey: 'empresa_id', as: 'refacciones'})
       this.hasMany(models.Remision, {foreignKey: 'empresa_id', as: 'remisiones'})
 

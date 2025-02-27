@@ -19,6 +19,11 @@ class ImpresoraService {
               model: models.Proyecto,
               as: 'proyecto',
               attributes: ['nombre']
+            },
+            {
+              model: models.Proveedor,
+              as: 'proveedor',
+              attributes: ['nombre']
             }
           ]
         });
@@ -29,7 +34,7 @@ class ImpresoraService {
     }
 
     async registrarLote(data) {
-        const { modelo, marca_id, estado, tipo, ubicacion, cliente_id, proyecto_id, tiene_accesorios, series } = data;
+        const { modelo, marca_id, estado, tipo, ubicacion, cliente_id, proyecto_id, proveedor_id, tiene_accesorios, series } = data;
 
         const impresoras = series.map(serie => ({
             serie,
@@ -41,7 +46,8 @@ class ImpresoraService {
             cliente_id: cliente_id || null,
             proyecto_id: proyecto_id || null,
             tiene_accesorios: tiene_accesorios || false,
-            fecha_entrada: new Date()
+            fecha_entrada: new Date(),
+            proveedor_id: proveedor_id || null
         }));
 
         await models.Impresora.bulkCreate(impresoras);

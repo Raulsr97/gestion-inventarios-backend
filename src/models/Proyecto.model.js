@@ -11,6 +11,16 @@ const ProyectoSchema = {
     nombre: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    cliente_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'clientes', 
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 };
 
@@ -19,7 +29,7 @@ class Proyecto extends Model {
         this.hasMany(models.Impresora, { foreignKey: 'proyecto_id', as: 'impresoras' })
         this.hasMany(models.Remision, {foreignKey: 'proyecto_id', as: 'remisiones'})
         this.hasMany(models.Toner, { foreignKey: 'proyecto_id', as: 'toners'})
-        this.hasMany(models.UnidadImagen, { foreignKey: 'proyecto_id', as: 'unidadesimg'})
+        this.hasMany(models.UnidadImagen, { foreignKey: 'proyecto_id', as: 'unidades_imagen'})
 
         this.belongsTo(models.Cliente, { foreignKey: 'cliente_id', as: 'cliente' })
     }

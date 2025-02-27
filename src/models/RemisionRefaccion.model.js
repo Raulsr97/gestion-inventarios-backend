@@ -20,8 +20,8 @@ const RemisionRefaccionSchema = {
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'toners',
-          key: 'serie',
+          model: 'refacciones',
+          key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',

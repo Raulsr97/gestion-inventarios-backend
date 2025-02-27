@@ -4,9 +4,9 @@ const { ACCESORIO_TABLE, AccesorioSchema } = require('../src/models/Accesorio.mo
 const { CLIENTE_TABLE, ClienteSchema } = require('../src/models/Cliente.model');
 const { EMPRESA_TABLE, EmpresaSchema } = require('../src/models/Empresa.model');
 const { EMPRESA_CLIENTE_TABLE, EmpresaClienteSchema } = require('../src/models/EmpresaCliente.model');
+const { MARCA_TABLE, MarcaSchema } = require('../src/models/Marca.model');
 const { IMPRESORA_TABLE, ImpresoraSchema } = require('../src/models/Impresora.model');
 const { IMPRESORA_ACCESORIO_TABLE, ImpresoraAccesorioSchema } = require('../src/models/ImpresoraAccesorio.model');
-const { MARCA_TABLE, MarcaSchema } = require('../src/models/Marca.model');
 const { PROVEEDOR_TABLE, ProveedorSchema } = require('../src/models/Proveedor.model');
 const { ProyectoSchema, PROYECTO_TABLE } = require('../src/models/Proyecto.model');
 const { REFACCION_TABLE, RefaccionSchema } = require('../src/models/Refaccion.model');
@@ -24,14 +24,14 @@ module.exports = {
     await queryInterface.createTable(EMPRESA_TABLE, EmpresaSchema)
     await queryInterface.createTable(CLIENTE_TABLE, ClienteSchema)
     await queryInterface.createTable(PROYECTO_TABLE, ProyectoSchema)
-    await queryInterface.createTable(IMPRESORA_TABLE, ImpresoraSchema)
-    await queryInterface.createTable(TONER_TABLE, TonerSchema)
-    await queryInterface.createTable(UNIDAD_IMAGEN_TABLE, UnidadImagenSchema)
-    await queryInterface.createTable(REFACCION_TABLE, RefaccionSchema)
     await queryInterface.createTable(PROVEEDOR_TABLE, ProveedorSchema)
     await queryInterface.createTable(MARCA_TABLE, MarcaSchema)
     await queryInterface.createTable(ACCESORIO_TABLE, AccesorioSchema)
     await queryInterface.createTable(REMISION_TABLE, RemisionSchema)
+    await queryInterface.createTable(IMPRESORA_TABLE, ImpresoraSchema)
+    await queryInterface.createTable(TONER_TABLE, TonerSchema)
+    await queryInterface.createTable(UNIDAD_IMAGEN_TABLE, UnidadImagenSchema)
+    await queryInterface.createTable(REFACCION_TABLE, RefaccionSchema)
     await queryInterface.createTable(EMPRESA_CLIENTE_TABLE, EmpresaClienteSchema)
     await queryInterface.createTable(IMPRESORA_ACCESORIO_TABLE, ImpresoraAccesorioSchema)
     await queryInterface.createTable(REMISION_IMPRESORA_TABLE, RemisionImpresoraSchema)

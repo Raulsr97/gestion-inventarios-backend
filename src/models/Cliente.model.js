@@ -21,7 +21,7 @@ class Cliente extends Model {
         this.hasMany(models.Impresora, { foreignKey: 'cliente_id', as: 'impresoras' })
         this.hasMany(models.Remision, {foreignKey: 'cliente_id', as: 'remisiones'})
         this.hasMany(models.Toner, { foreignKey: 'cliente_id', as: 'toners'})
-        this.hasMany(models.UnidadImagen, { foreignKey: 'cliente_id', as: 'unidadesimg'})
+        this.hasMany(models.UnidadImagen, { foreignKey: 'cliente_id', as: 'unidades_imagen'})
         this.hasMany(models.Refaccion, { foreignKey: 'cliente_id', as: 'refacciones'})
 
         this.belongsToMany(models.Empresa, {

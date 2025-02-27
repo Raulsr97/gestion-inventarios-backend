@@ -19,7 +19,7 @@ const RemisionUnidadImgSchema = {
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'unidadesimg',
+          model: 'unidades_imagen',
           key: 'serie',
         },
         onUpdate: 'CASCADE',
