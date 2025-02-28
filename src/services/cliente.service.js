@@ -6,7 +6,17 @@ class ClienteService {
     }
 
     async crearCliente(data) {
-        return await models.Cliente.create(data);
+        const { nombre } = data
+        
+        // Buscar si el cliente ya existe
+        let cliente = await models.Cliente.findOne({ where: { nombre }})
+
+        if (!cliente) {
+            // Si no existe lo creamos
+            cliente = await models.Cliente.create({ nombre })
+        }
+
+        return cliente
     }
 }
 

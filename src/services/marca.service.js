@@ -6,7 +6,17 @@ class MarcaService {
     }
 
     async crearMarca(data) {
-        return await models.Marca.create(data);
+        const { nombre } = data
+
+        // Busca si la marca ya existe
+        let marca = await models.Marca.findOne({where : { nombre }})
+
+        if (!marca) {
+            // Si la marca no existe la creamos
+            marca = await models.Marca.create({ nombre });
+        }
+
+        return marca 
     }
 }
 

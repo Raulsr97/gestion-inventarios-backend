@@ -14,7 +14,10 @@ class ProyectoService {
             throw new Error('Debe especificar un cliente para el proyecto')
         }
 
-        const nuevoProyecto = await models.Proyecto.create({ nombre, cliente_id })
+        const nuevoProyecto = await models.Proyecto.create({ 
+            nombre, 
+            cliente_id
+        })
         return nuevoProyecto
     }
 }
