@@ -10,23 +10,29 @@ class ProyectoService {
     async crearProyecto(data) {
         const { nombre, cliente_id } = data
 
-        if (!cliente_id) {
-            throw new Error('Debe especificar un cliente para el proyecto')
+        // Verificar si el cliente existe antes de crear el proyecto
+        const clienteExiste = await models.Cliente.findByPk(cliente_id)
+        if (!clienteExiste) {
+            throw new Error(`El cliente con ID ${cliente_id} no existe.`);
         }
 
-        // Buscar si el proyecto ya existe
-        let proyecto = await models.Proyecto.findOne({ where: { nombre }})
+        // Buscar si el proyecto ya existe para este cliente
+        let proyecto = await models.Proyecto.findOne({ 
+            where: { nombre, cliente_id }
+        });
 
         if (!proyecto) {
-            // Si no existe lo creamos
             proyecto = await models.Proyecto.create({ 
                 nombre,
                 cliente_id 
-            })
+            });
+            console.log("🟢 Se creó un nuevo proyecto:", nombre, "para el cliente con ID:", cliente_id);
+        } else {
+            console.log("🟡 Proyecto ya existía, se usará el ID:", proyecto.id);
         }
 
-        return proyecto
-    }
+        return proyecto;
+        }
 }
 
 module.exports = new ProyectoService();
