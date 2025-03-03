@@ -17,10 +17,6 @@ const AccesorioSchema = {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1
-    },
-    descripcion: {
-        type: DataTypes.STRING,
-        allowNull: false
     }
 };
 

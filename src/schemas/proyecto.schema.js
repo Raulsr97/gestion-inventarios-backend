@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-const id = Joi.number().integer();
 const nombre = Joi.string().min(3).max(100).required();
 const cliente_id = Joi.number().integer().required(); // Se agrega cliente_id
 

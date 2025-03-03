@@ -41,14 +41,17 @@ class ImpresoraService {
           tipo, 
           ubicacion, 
           tiene_accesorios, 
+          accesorios,
           series, 
           marca_id,
           cliente_id, 
           proyecto_id, 
-          proveedor_id
+          proveedor_id,
+          flujo,
+          origen_recoleccion
       } = data;
-  
-       // 🔍 Buscar o crear la marca antes de registrar la impresora
+
+      // 🔍 Buscar o crear la marca antes de registrar la impresora
       let marca = null;
       if (marca_id) {
           marca = await models.Marca.findOne({ where: { id: marca_id } });
@@ -67,19 +70,18 @@ class ImpresoraService {
       }
   
       // Si se proporciona un nuevo proyecto, primero lo registramos
-      let proyectoId = proyecto_id;
-      if (proyecto_id === "nuevo" && data.nuevoProyecto) {
+      let proyecto = null;
+      if (proyecto_id) {
         if (!cliente_id) {
             throw new Error("No se puede registrar un proyecto sin un cliente asociado.");
         }
+        proyecto = await models.Proyecto.findOne({ where: { id : proyecto_id }})
+        if (!proyecto) {
+          throw new Error('El Proyecto seleccionado no existe')
+        }
+      }
 
-        const [proyecto, created] = await models.Proyecto.findOrCreate({
-            where: { nombre: data.nuevoProyecto, cliente_id },
-            defaults: { nombre: data.nuevoProyecto, cliente_id }
-        });
-
-        proyectoId = proyecto.id; // ✅ Guardamos el ID del nuevo proyecto
-    }
+    
   
       // 🟢 Verificamos si el Proveedor existe o lo creamos
       let proveedor = null;
@@ -99,13 +101,41 @@ class ImpresoraService {
           tipo,
           ubicacion: ubicacion || 'Almacén',
           cliente_id: cliente ? cliente.id : null,
-          proyecto_id: proyectoId || null,
+          proyecto_id: proyecto ? proyecto.id : null,
           tiene_accesorios: tiene_accesorios || false,
           fecha_entrada: new Date(),
-          proveedor_id: proveedor ? proveedor.id : null
+          proveedor_id: proveedor ? proveedor.id : null,
+          flujo: flujo || null,
+          origen_recoleccion: origen_recoleccion || null
       }));
   
       await models.Impresora.bulkCreate(impresoras);
+
+      // Si tiene accesorios los registramos
+      if (tiene_accesorios && accesorios && accesorios.length > 0) {
+        for (const numeroParte of accesorios) {
+          let accesorio = await models.Accesorio.findOne({ where: { numero_parte: numeroParte}})
+
+          if (accesorio) {
+            // Si accesorio ya existe aumentamos la cantidad
+            await accesorio.increment('cantidad', { by: series.length})
+          } else {
+            accesorio = await models.Accesorio.create({
+              numero_parte: numeroParte,
+              cantidad: series.length
+            })
+          }
+
+          // Guardar la relacion en la tabla intermedia impresora_accesorios
+          for (const serie of series) {
+            await models.ImpresoraAccesorio.create({
+              serie,
+              accesorio_id: accesorio.id,
+              cantidad: 1
+            })
+          }
+        }
+      }
   
       return {
           mensaje: "Impresoras registradas exitosamente",
@@ -115,7 +145,7 @@ class ImpresoraService {
   
 
     async contarPorProyecto() {
-        const resultados = await models.Impresora.findAll({
+        const resultados = await models.Impresoras.findAll({
             // Definimos que informacion queremos
             attributes: [
                 'proyecto_id', // Saber a que proyecto pertenece cada impresora

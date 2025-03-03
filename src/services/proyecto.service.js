@@ -14,11 +14,18 @@ class ProyectoService {
             throw new Error('Debe especificar un cliente para el proyecto')
         }
 
-        const nuevoProyecto = await models.Proyecto.create({ 
-            nombre, 
-            cliente_id
-        })
-        return nuevoProyecto
+        // Buscar si el proyecto ya existe
+        let proyecto = await models.Proyecto.findOne({ where: { nombre }})
+
+        if (!proyecto) {
+            // Si no existe lo creamos
+            proyecto = await models.Proyecto.create({ 
+                nombre,
+                cliente_id 
+            })
+        }
+
+        return proyecto
     }
 }
 
