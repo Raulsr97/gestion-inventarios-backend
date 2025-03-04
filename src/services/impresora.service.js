@@ -145,21 +145,24 @@ class ImpresoraService {
   
 
     async contarPorProyecto() {
-        const resultados = await models.Impresoras.findAll({
+        console.log("🔹 Obteniendo stock agrupado por proyecto...");
+
+        const resultados = await models.Impresora.findAll({
             // Definimos que informacion queremos
             attributes: [
                 'proyecto_id', // Saber a que proyecto pertenece cada impresora
                 // Contamos cuantas impresoras hay agrupadas por proyecto id
-                [Sequelize.fn('COUNT', Sequelize.col('id')), 'cantidad']
+                [Sequelize.fn('COUNT', Sequelize.col('serie')), 'cantidad']
             ],
-            where: { ubicacion: 'Almacén' }, // Solo impresoras en almacen
+            where: { ubicacion: 'Almacen' }, // Solo impresoras en almacen
             group: ['proyecto_id'], // Agrupamos las impresoras segun su proyecto
             // Relacionar con la tabla proyectos
             include: [
                 {
                     model: models.Proyecto,
                     as: 'proyecto',
-                    attributes: ['nombre'] // Obtener el nombre del proyecto
+                    attributes: ['id', 'nombre'], // Obtener el nombre del proyecto
+                    include: [{ model: models.Cliente, as: 'cliente', attributes: ['id', 'nombre'] }]
                 }
             ]
         })

@@ -16,6 +16,8 @@ router.get('/', async (req, res, next) => {
 
 router.get('/almacen-por-proyecto', async (req, res, next) => {
     try {
+        console.log("🔍 Consultando stock por proyecto..."); 
+
         const datos = await ImpresoraService.contarPorProyecto()
         res.json(datos)
     } catch (error) {
