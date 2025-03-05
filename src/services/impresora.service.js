@@ -25,6 +25,12 @@ class ImpresoraService {
               model: models.Proveedor,
               as: 'proveedor',
               attributes: ['nombre']
+            },
+            {
+              model: models.Accesorio,
+              as: 'accesorios',
+              attributes: ['numero_parte'],
+              through: { attributes: [] } // Evita que sequelize incluya los datos de la tabla intermedia 
             }
           ]
         });
