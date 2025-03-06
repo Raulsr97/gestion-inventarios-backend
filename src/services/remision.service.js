@@ -39,7 +39,10 @@ class RemisionService {
 
             // Actualizar la ubicación de la impresora 
             await models.Impresora.update(
-              { ubicacion: 'En Tránsito'},
+              { 
+                ubicacion: 'En Tránsito',
+                fecha_salida: new Date()
+              },
               { where: { serie }, transaction }
             )
           }))
@@ -78,7 +81,10 @@ class RemisionService {
         //Restaurar las impresoras a 'Almacen'
         await Promise.all(impresorasAsociadas.map(async (impresora) => {
           await models.Impresora.update(
-            { ubicacion: 'Almacen' },
+            { 
+              ubicacion: 'Almacen', 
+              fecha_salida: null
+            },
             { where: { serie: impresora.serie }, transaction}
           )
         }))
@@ -131,7 +137,10 @@ class RemisionService {
         // Actualizar la ubicación a entregado
         await Promise.all(impresorasAsociadas.map(async (impresora) => {
           await models.Impresora.update(
-            { ubicacion: 'Entregado'},
+            { 
+              ubicacion: 'Entregado',
+              fecha_entrega_final: new Date()
+            },
             { where: { serie: impresora.serie}, transaction}
           )
         }))
