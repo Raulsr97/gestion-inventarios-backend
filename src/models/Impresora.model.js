@@ -33,7 +33,7 @@ const ImpresoraSchema = {
         allowNull: false
     },
     ubicacion: {
-        type: DataTypes.ENUM('Almacen', 'Entregado', 'Devuelto al proveedor'),
+        type: DataTypes.ENUM('Almacen', 'Entregado', 'En Tránsito', 'Devuelto al proveedor'),
         allowNull: false,
         defaultValue: 'Almacen'
     },

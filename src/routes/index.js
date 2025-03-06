@@ -8,6 +8,7 @@ const unidadImagenRoutes = require('./unidadImagen.router')
 const marcaRoutes = require('./marca.router')
 const proveedorRoutes = require('./proveedor.router')
 const accesorioRoutes = require('./accesorio.router')
+const remisionRoutes = require('./remision.router')
 
 function routerApi(app) {
     const router = express.Router();
@@ -21,6 +22,7 @@ function routerApi(app) {
     router.use('/marcas',marcaRoutes)
     router.use('/proveedores', proveedorRoutes)
     router.use('/accesorios', accesorioRoutes)
+    router.use('/remisiones', remisionRoutes)
 
 }
 

@@ -56,6 +56,39 @@ const RemisionSchema = {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      estado: {
+        type: DataTypes.ENUM('Pendiente', 'Cancelada', 'Confirmada'),
+        allowNull: false,
+        defaultValue: 'Pendiente',
+      },
+      remision_firmada: {
+        type: DataTypes.STRING, // Guardará la URL del archivo PDF de la remisión firmada
+        allowNull: true, // Se llena solo al confirmar entrega
+      },
+      observaciones_entrega: {
+        type: DataTypes.TEXT,
+        allowNull: true, // Puede llenarse al confirmar la entrega
+      },
+      usuario_creador: {
+        type: DataTypes.STRING,
+        allowNull: true, // Registra quién creó la remisión.
+      },
+      usuario_entrega: {
+        type: DataTypes.STRING,
+        allowNull: true, // Se llena cuando la remisión se marca como entregada.
+      },
+      fecha_entrega: {
+        type: DataTypes.DATE,
+        allowNull: true, // Se llena cuando se confirma la entrega.
+      },
+      cancelada_por: {
+        type: DataTypes.STRING,
+        allowNull: true, // Registra quién canceló la remisión.
+      },
+      fecha_cancelacion: {
+        type: DataTypes.DATE,
+        allowNull: true, // Se llena cuando la remisión es cancelada.
+      },
 }
 
 class Remision extends Model {

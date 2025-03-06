@@ -21,4 +21,4 @@ sequelize.authenticate()
 
 setupModels(sequelize)
       
-module.exports = sequelize 
+module.exports = {sequelize, models: sequelize.models} 
