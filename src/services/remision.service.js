@@ -18,6 +18,17 @@ class RemisionService {
             throw new Error('Algunas series no existen en la base de datos')
           }
 
+          console.log("📥 Datos recibidos en el backend:", {
+            numero_remision,
+            empresa_id,
+            cliente_id,
+            proyecto_id,
+            destinatario,
+            direccion_entrega,
+            notas,
+            usuario_creador
+          });
+
           // Crear la remision con la transaccion
           const nuevaRemision = await models.Remision.create({
             numero_remision,
@@ -46,6 +57,22 @@ class RemisionService {
               { where: { serie }, transaction }
             )
           }))
+
+          // 🔹 Actualizar cliente_id y proyecto_id en las impresoras que no lo tengan
+          await models.Impresora.update(
+            { 
+                cliente_id: cliente_id, 
+                proyecto_id: proyecto_id 
+            },
+            { 
+                where: { 
+                    serie: series, 
+                    cliente_id: null, // Solo las que no tienen cliente asignado
+                    proyecto_id:null
+                },
+                transaction
+            }
+          )
 
           await transaction.commit()
           return nuevaRemision
