@@ -9,6 +9,13 @@ class EmpresaService {
             throw new Error("Error al obtener empresas");
         }
     }
+
+    async crearEmpresa(data) {
+        const { nombre } = data
+
+        let empresa = await models.Empresa.create({ nombre })
+        return empresa
+    }
 }
 
 module.exports = new EmpresaService();

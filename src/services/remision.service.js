@@ -236,6 +236,45 @@ class RemisionService {
 
       return remisiones;
     }
+
+    async obtenerTodasRemisiones() {
+      try {
+        const remisiones = await models.Remision.findAll({
+          include: [
+            { model: models.Cliente, as: 'cliente', attributes: ['id', 'nombre']},
+            { model: models.Proyecto, as: 'proyecto', attributes: ['id', 'nombre']}
+          ],
+          order: [['fecha_emision', 'DESC']]
+        })
+
+        return remisiones
+      } catch (error) {
+        console.error("❌ Error al obtener las remisiones:", error);
+        throw new Error("Error al obtener las remisiones");
+      }
+    }
+
+    async obtenerRemisionPorNumero(numero_remision) {
+      try {
+        const remision = await models.Remision.findOne({
+            where: { numero_remision },
+            include: [
+                { model: models.Cliente, as: "cliente" },
+                { model: models.Proyecto, as: "proyecto" },
+                { model: models.Empresa, as: "empresa" }
+            ]
+        });
+
+        if (!remision) {
+            throw new Error("No se encontró la remisión.");
+        }
+
+        return remision;
+    } catch (error) {
+        console.error("❌ Error al obtener la remisión:", error.message);
+        throw new Error("Error al obtener la remisión.");
+    }
+    }
 }
 
 module.exports = new RemisionService();
