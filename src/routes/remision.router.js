@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const remisionService = require('../services/remision.service')
+const PDFService = require('../services/pdf.service')
 const validatorHandler = require('../../middlewares/validator.handler');
 const { crearRemisionSchema, cancelarRemisionSchema, confirmarEntregaSchema } = require('../schemas/remision.schema')
-const { generarPDF } = require('../services/pdf.service')
-const path = require("path")
+
 
 // Obtener todas las remisiones
 router.get('/total', async(req, res) => {
@@ -73,30 +73,24 @@ router.get("/:numero_remision", async (req, res) => {
   }
 });
 
-// pdfs
+// Router para descargar el PDF
 router.get('/pdf/:numero_remision', async (req, res) => {
-  console.log("📩 Parámetros recibidos:", req.params);
-
   try {
-      const numeroRemision = req.params.numero_remision; // ✅ Obtener el parámetro correctamente
+    const { numero_remision } = req.params
+    const pdfBuffer = await PDFService.generarPdf(numero_remision)
 
-      if (!numeroRemision) {
-          return res.status(400).json({ error: "Número de remisión requerido." });
-      }
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${numero_remision}.pdf"`
+    })
 
-      const pdfBuffer = await generarPDF(numeroRemision);
-
-      res.set({
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename=${numeroRemision}.pdf`
-      });
-      res.send(pdfBuffer);
-
+    res.send(pdfBuffer)
   } catch (error) {
-      console.error("❌ Error al descargar el PDF:", error);
-      res.status(500).json({ error: "No se pudo generar el PDF." });
+    console.error("❌ Error al generar el PDF:", error.message)
+    res.status(500).json({ error: "No se pudo generar el PDF." })
   }
-});
+})
+
 
   
   module.exports = router;
