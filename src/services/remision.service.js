@@ -25,7 +25,7 @@ class RemisionService {
             proyecto_id,
             destinatario,
             direccion_entrega,
-            notas,
+            notas: notas || null,
             usuario_creador
           });
 
