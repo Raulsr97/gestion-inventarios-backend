@@ -74,16 +74,21 @@ router.get("/:numero_remision", async (req, res) => {
 });
 
 // Router para descargar el PDF
-router.get('/pdf/:numero_remision', async (req, res) => {
+router.get('/generar-pdf/:numero_remision', async (req, res) => {
+  const { numero_remision } = req.params
+  console.log("📥 Solicitud para generar PDF de la remisión:", numero_remision);
   try {
-    const { numero_remision } = req.params
     const pdfBuffer = await PDFService.generarPdf(numero_remision)
+    console.log("📄 PDF generado correctamente.");
 
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${numero_remision}.pdf"`
+      'Content-Disposition': `attachment; filename=remision_${numero_remision}.pdf`
     })
 
+    console.log("📄 Tamaño del PDF (bytes):", pdfBuffer.length)
+    console.log("📂 Tipo de pdfBuffer:", typeof pdfBuffer)
+    console.log("📏 Es buffer:", Buffer.isBuffer(pdfBuffer))
     res.send(pdfBuffer)
   } catch (error) {
     console.error("❌ Error al generar el PDF:", error.message)

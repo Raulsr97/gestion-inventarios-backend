@@ -3,7 +3,8 @@ const puppeteer = require('puppeteer')
 class PDFService {
     async generarPdf(numero_remision) {
         try {
-          const url = (`http://localhost:5173/movimientos/impresoras/vista-previa/${numero_remision}`)
+          console.log("📄 Número de remisión recibido en servicio PDF:", numero_remision);
+          const url = (`http://localhost:5173/vista-remision/${numero_remision}`)
 
           const browser = await puppeteer.launch({ headless: true })
           const page = await browser.newPage()
@@ -30,7 +31,7 @@ class PDFService {
           await browser.close()
 
           console.log("✅ PDF generado con éxito para:", numero_remision);
-          return pdfBuffer
+          return Buffer.from(pdfBuffer)
         } catch (error) {
           console.error("❌ Error al generar el PDF:", error);
           throw new Error("No se pudo generar el PDF.");
