@@ -261,7 +261,20 @@ class RemisionService {
             include: [
                 { model: models.Cliente, as: "cliente" },
                 { model: models.Proyecto, as: "proyecto" },
-                { model: models.Empresa, as: "empresa" }
+                { model: models.Empresa, as: "empresa" },
+                {
+                  model: models.Impresora,
+                  as: 'impresoras',
+                  through: { attributes: [] },
+                  include: [
+                    { model: models.Marca, as: 'marca'},
+                    {
+                      model: models.Accesorio,
+                      as: 'accesorios',
+                      through: { attributes: []}
+                    }
+                  ]
+                }
             ]
         });
 

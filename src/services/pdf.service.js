@@ -14,6 +14,44 @@ class PDFService {
 
           // Navegar a la vista previa
           await page.goto(url, { waitUntil: 'networkidle2'})
+          await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
+
+          // Esperar que tenga contenido visible
+          await page.waitForFunction(() => {
+            const container = document.querySelector('#vista-remision-imme')
+            return container && container.innerText.length > 100
+          }, { timeout: 30000 })
+
+           // Agregar estilos específicos para evitar cortes
+          await page.addStyleTag({
+            content: `
+              #vista-remision-imme {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                display: block;
+                overflow: visible;
+              }
+
+              table, tr, td, th {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+              }
+
+              tr {
+                page-break-after: auto;
+              }
+
+              tbody::after {
+                content: '';
+                display: table-row;
+                page-break-after: always;
+              }
+            `
+          });
+
+          // Espera adicional para asegurar que todo se aplique
+          await new Promise(resolve => setTimeout(resolve, 1000))
+
 
           // Ocultar botones de confirmacion y modificacion 
           await page.evaluate(() => {
@@ -23,9 +61,10 @@ class PDFService {
 
           // Generar PDF con ajustes
           const pdfBuffer = await page.pdf({
-            format: 'A4',
+            format: 'letter',
             printBackground: true,
-            margin: { top: '20mm', right: '10mm', bottom: '20mm', left: '10mm'}
+            preferCSSPageSize: true,
+            margin: { top: '5mm', right: '10mm', bottom: '5mm', left: '10mm'}
           })
 
           await browser.close()
@@ -36,8 +75,6 @@ class PDFService {
           console.error("❌ Error al generar el PDF:", error);
           throw new Error("No se pudo generar el PDF.");
         }
-
-        
     }
 }
 
