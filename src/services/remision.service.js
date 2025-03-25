@@ -41,6 +41,17 @@ class RemisionService {
             usuario_creador
           }, { transaction })
 
+          console.log("📥 Datos recibidos en el backend:", {
+            numero_remision,
+            empresa_id,
+            cliente_id,
+            proyecto_id,
+            destinatario,
+            direccion_entrega,
+            notas,
+            usuario_creador
+          });
+
           // Asociar las impresoras a la remisión y cambiar su ubicación a 'En tránsito'
           await Promise.all(series.map(async (serie) => {
             await models.RemisionImpresora.create({

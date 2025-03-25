@@ -22,30 +22,28 @@ class PDFService {
             return container && container.innerText.length > 100
           }, { timeout: 30000 })
 
-           // Agregar estilos específicos para evitar cortes
+          
           await page.addStyleTag({
             content: `
-              #vista-remision-imme {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                display: block;
-                overflow: visible;
-              }
+            #vista-remision-imme {
+              break-inside: auto;
+              page-break-inside: auto;
+              display: block;
+              overflow: visible;
+            }
 
-              table, tr, td, th {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-              }
+            table, tr, td, th {
+              break-inside: auto !important;
+              page-break-inside: auto !important;
+            }
 
-              tr {
-                page-break-after: auto;
-              }
+            thead {
+              display: table-header-group;
+            }
 
-              tbody::after {
-                content: '';
-                display: table-row;
-                page-break-after: always;
-              }
+            tfoot {
+              display: table-footer-group;
+            }
             `
           });
 
