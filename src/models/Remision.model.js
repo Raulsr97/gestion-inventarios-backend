@@ -88,7 +88,7 @@ const RemisionSchema = {
       fecha_cancelacion: {
         type: DataTypes.DATE,
         allowNull: true, // Se llena cuando la remisión es cancelada.
-      },
+      }
 }
 
 class Remision extends Model {
