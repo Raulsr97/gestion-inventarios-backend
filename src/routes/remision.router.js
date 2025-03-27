@@ -76,9 +76,11 @@ router.get("/:numero_remision", async (req, res) => {
 // Router para descargar el PDF
 router.get('/generar-pdf/:numero_remision', async (req, res) => {
   const { numero_remision } = req.params
+  const fechaVisual = req.query.fecha 
+
   console.log("📥 Solicitud para generar PDF de la remisión:", numero_remision);
   try {
-    const pdfBuffer = await PDFService.generarPdf(numero_remision)
+    const pdfBuffer = await PDFService.generarPdf(numero_remision, fechaVisual)
     console.log("📄 PDF generado correctamente.");
 
     res.set({

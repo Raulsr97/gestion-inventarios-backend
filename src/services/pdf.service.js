@@ -1,10 +1,19 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer');
+const { obtenerRemisionPorNumero } = require('./remision.service');
 
 class PDFService {
-    async generarPdf(numero_remision) {
+    async generarPdf(numero_remision, fechaVisual) {
+        const remision = await obtenerRemisionPorNumero(numero_remision)
+
+        // Si se recibe una fecha visual, reemplazamos temporalmente la fecha_emision
+        if (fechaVisual) {
+          remision.fecha_emision = fechaVisual
+        }
+
         try {
           console.log("📄 Número de remisión recibido en servicio PDF:", numero_remision);
-          const url = (`http://localhost:5173/vista-remision/${numero_remision}`)
+          const url = `http://localhost:5173/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`
+
 
           const browser = await puppeteer.launch({ headless: true })
           const page = await browser.newPage()
