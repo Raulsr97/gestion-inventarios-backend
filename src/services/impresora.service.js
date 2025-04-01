@@ -96,7 +96,7 @@ class ImpresoraService {
         if (!proveedor) {
             throw new Error('El proveedor seleccionado no existe.');
         }
-    }
+      }
   
       // 🟢 Ahora que tenemos todos los IDs, registramos las impresoras
       const impresoras = series.map(serie => ({
