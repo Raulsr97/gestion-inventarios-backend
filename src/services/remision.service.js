@@ -2,12 +2,14 @@ const { models, sequelize } = require('../config/db')
 
 class RemisionService {
     async crearRemision(data) {
-        const { numero_remision, empresa_id, cliente_id, proyecto_id, destinatario, direccion_entrega, notas, series, usuario_creador } = data;
+        const { numero_remision, empresa_id, cliente_id, proyecto_id, destinatario, direccion_entrega, notas, series, fecha_programada, usuario_creador } = data;
 
         // Iniciamos una transaccion para asegurar consistencia en la base de datos
         const transaction = await sequelize.transaction()
 
         try {
+          const fecha_programada_obj = fecha_programada ? new Date(`${fecha_programada}T00:00:00Z`) : null
+
           // Validar que todas las series existen en la base de datos
           const impresorasExistentes = await models.Impresora.findAll({
             where: { serie: series },
@@ -26,8 +28,16 @@ class RemisionService {
             destinatario,
             direccion_entrega,
             notas: notas || null,
+            fecha_programada,
             usuario_creador
           });
+
+          // console.log("💾 Preparando para guardar:");
+          // console.log({
+          //   fecha_programada_obj,
+          //   tipo: typeof fecha_programada_obj,
+          //   esDateValido: !isNaN(fecha_programada_obj),
+          // });
 
           // Crear la remision con la transaccion
           const nuevaRemision = await models.Remision.create({
@@ -38,6 +48,7 @@ class RemisionService {
             destinatario,
             direccion_entrega,
             notas,
+            fecha_programada: fecha_programada_obj,
             usuario_creador
           }, { transaction })
 
@@ -49,6 +60,7 @@ class RemisionService {
             destinatario,
             direccion_entrega,
             notas,
+            fecha_programada,
             usuario_creador
           });
 
@@ -63,7 +75,7 @@ class RemisionService {
             await models.Impresora.update(
               { 
                 ubicacion: 'En Tránsito',
-                fecha_salida: new Date()
+                fecha_salida: fecha_programada_obj
               },
               { where: { serie }, transaction }
             )

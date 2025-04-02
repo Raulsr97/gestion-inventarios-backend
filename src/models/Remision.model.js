@@ -88,6 +88,10 @@ const RemisionSchema = {
       fecha_cancelacion: {
         type: DataTypes.DATE,
         allowNull: true, // Se llena cuando la remisión es cancelada.
+      },
+      fecha_programada: {
+        type: DataTypes.DATE,
+        allowNull: true,
       }
 }
 

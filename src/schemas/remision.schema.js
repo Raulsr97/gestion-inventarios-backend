@@ -16,6 +16,7 @@ const fecha_entrega = Joi.date().allow(null);
 const cancelada_por = Joi.string().allow(null);
 const fecha_cancelacion = Joi.date().allow(null);
 const series = Joi.array().items(Joi.string()).min(1).required(); // Debe haber al menos 1 serie
+const fecha_programada = Joi.date().allow(null)
 
 // 📌 Esquema para validar la creación de una remisión
 const crearRemisionSchema = Joi.object({
@@ -27,7 +28,8 @@ const crearRemisionSchema = Joi.object({
   direccion_entrega,
   notas,
   usuario_creador,
-  series
+  series,
+  fecha_programada
 });
 
 // 📌 Esquema para validar la cancelación de una remisión
