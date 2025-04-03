@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path')
 dotenv.config();
 
 const { logErrors, ormErrorHandler, errorHandler, boomErrorHandler } = require('../middlewares/error.handler');
@@ -8,6 +9,9 @@ const routerApi = require('./routes'); // Carga de rutas centralizada
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Servir archivos estaticos 
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Middlewares
 app.use(cors());

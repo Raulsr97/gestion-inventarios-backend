@@ -311,6 +311,31 @@ class RemisionService {
         throw new Error("Error al obtener la remisión.");
     }
     }
+
+    async subirEvidencia(numero_remision, nombreArchivo) {
+      try {
+        const remision = await models.Remision.findOne({
+          where: { numero_remision }
+        })
+
+        if (!remision) {
+          throw new Error('Remision no encontrada')
+        }
+
+        // Actualizar la remision con el archivo y estado confirmado
+        remision.remision_firmada = nombreArchivo
+        remision.estado = 'Confirmada'
+        remision.fecha_entrega = new Date()
+        remision.usuario_entrega = 'admin'
+
+        await remision.save()
+
+        return remision
+      } catch (error) {
+        console.error("❌ Error al subir evidencia:", error.message)
+        throw new Error("No se pudo actualizar la remisión con la evidencia")
+      }
+    }
 }
 
 module.exports = new RemisionService();

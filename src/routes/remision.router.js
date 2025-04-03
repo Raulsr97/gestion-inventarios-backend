@@ -3,6 +3,7 @@ const router = express.Router()
 const remisionService = require('../services/remision.service')
 const PDFService = require('../services/pdf.service')
 const validatorHandler = require('../../middlewares/validator.handler');
+const uploadEvidencia = require('../../middlewares/uploadEvidencia')
 const { crearRemisionSchema, cancelarRemisionSchema, confirmarEntregaSchema } = require('../schemas/remision.schema')
 
 
@@ -27,16 +28,22 @@ router.post('/', validatorHandler(crearRemisionSchema, 'body'), async (req, res,
     }
 })
 
-// Cancelar una remisión por su número
-router.delete('/:numero_remision', validatorHandler(cancelarRemisionSchema, 'body'),  async (req, res, next) => {
-    try {
-      const resultado = await remisionService.cancelarRemision(req.params.numero_remision);
-      res.json(resultado);
-    } catch (error) {
-      next(error)
-    }
- 
-});
+// Cancelar una remisión 
+router.patch('/:numero_remision/cancelar', async (req, res) => {
+  try {
+    const { numero_remision } = req.params
+    const { usuario } = req.body 
+
+    const usuarioCancelacion = usuario || 'admin'
+
+    const resultado = await remisionService.cancelarRemision(numero_remision, usuarioCancelacion)
+
+    res.status(200).json(resultado)
+  } catch (error) {
+    console.error("❌ Error al cancelar remisión:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+})
   
 // Confirmar la entrega de una remisión
 router.put('/:numero_remision/confirmar', validatorHandler(confirmarEntregaSchema, 'body'), async (req, res, next) => {
@@ -98,6 +105,31 @@ router.get('/generar-pdf/:numero_remision', async (req, res) => {
   }
 })
 
+// Router para subir archivo de evidencia
+router.post('/:numero_remision/evidencia', uploadEvidencia.single('archivo'), async (req, res) => {
+  try {
+    console.log("📤 Archivo recibido:", req.file); // <- esto debería verse
+    const { numero_remision } = req.params
 
-  
-  module.exports = router;
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se recibió ningun archivo'})
+    }
+
+    const nombreArchivo = `remisiones_firmadas/${req.file.filename}` // ruta relativa al archivo
+
+    const remisionActualizada = await remisionService.subirEvidencia(numero_remision, nombreArchivo)
+
+    res.status(200).json({
+      message: 'Evidencia subida correctamente',
+      remision: remisionActualizada
+    })
+  } catch (error) {
+    console.error("❌ Error en el endpoint de evidencia:", error.message)
+    res.status(500).json({ error: 'Error al subir evidencia' })
+  }
+})
+
+
+
+
+module.exports = router;
