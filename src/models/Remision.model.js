@@ -3,7 +3,7 @@ const { Model, DataTypes } = require('sequelize')
 const REMISION_TABLE = 'remisiones'
 
 const RemisionSchema = {
-    numero_remision: {
+      numero_remision: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,

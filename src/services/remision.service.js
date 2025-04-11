@@ -32,13 +32,6 @@ class RemisionService {
             usuario_creador
           });
 
-          // console.log("💾 Preparando para guardar:");
-          // console.log({
-          //   fecha_programada_obj,
-          //   tipo: typeof fecha_programada_obj,
-          //   esDateValido: !isNaN(fecha_programada_obj),
-          // });
-
           // Crear la remision con la transaccion
           const nuevaRemision = await models.Remision.create({
             numero_remision,
@@ -163,7 +156,7 @@ class RemisionService {
       }
     }
 
-    async confirmarEntregaRemision(numero_remision, usuario_entrega, remision_firmada = null) {
+    async confirmarEntregaRemision(numero_remision, usuario_entrega, remision_firmada) {
       const transaction = await sequelize.transaction()
 
       try {
@@ -176,6 +169,10 @@ class RemisionService {
         // Solo se pueden confirmar remisiones en estado "Pendiente"
         if (remision.estado !== 'Pendiente') {
           throw new Error('Solo se pueden confirmar remisiones en estado Pendiente');
+        }
+
+        if (!remision_firmada) {
+          throw new Error('Se requiere el archivo de remisión firmada para confirmar.');
         }
 
         // Obtener las impresoras asociadas a la remision
@@ -201,7 +198,7 @@ class RemisionService {
             estado: 'Confirmada',
             usuario_entrega,
             fecha_entrega: new Date(),
-            remision_firmada: remision_firmada || null
+            remision_firmada
           },
           { transaction }
         )
@@ -336,6 +333,8 @@ class RemisionService {
         throw new Error("No se pudo actualizar la remisión con la evidencia")
       }
     }
+
+   
 }
 
 module.exports = new RemisionService();

@@ -10,6 +10,8 @@ const proveedorRoutes = require('./proveedor.router')
 const accesorioRoutes = require('./accesorio.router')
 const remisionRoutes = require('./remision.router')
 const empresaRouter = require('./empresa.router')
+const remisionRecoleccionRoutes = require('./remisionRecoleccion.router')
+const remisionConsultaRouter = require('./remisionConsulta.router')
 
 function routerApi(app) {
     const router = express.Router();
@@ -25,7 +27,8 @@ function routerApi(app) {
     router.use('/accesorios', accesorioRoutes)
     router.use('/remisiones', remisionRoutes)
     router.use('/empresas', empresaRouter)
-
+    router.use('/remisiones-recoleccion', remisionRecoleccionRoutes)
+    router.use('/remisiones-consulta', remisionConsultaRouter)
 }
 
 module.exports = routerApi;

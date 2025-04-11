@@ -24,6 +24,8 @@ class Empresa extends Model {
       this.hasMany(models.UnidadImagen, {foreignKey: 'empresa_id', as: 'unidades_imagen'})
       this.hasMany(models.Refaccion, {foreignKey: 'empresa_id', as: 'refacciones'})
       this.hasMany(models.Remision, {foreignKey: 'empresa_id', as: 'remisiones'})
+      this.hasMany(models.RemisionRecoleccion, {foreignKey: 'empresa_id', as: 'remisiones_recoleccion'})
+
 
 
       this.belongsToMany(models.Cliente, {

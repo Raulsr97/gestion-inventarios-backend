@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { obtenerRemisionPorNumero } = require('./remision.service');
+const { obtenerRemisionPorNumero: obtenerRemisionRecoleccionPorNumero} = require('./remisionRecoleccion.service')
 
 class PDFService {
     async generarPdf(numero_remision, fechaVisual) {
@@ -82,6 +83,79 @@ class PDFService {
           console.error("❌ Error al generar el PDF:", error);
           throw new Error("No se pudo generar el PDF.");
         }
+    }
+
+    async generarPdfRecoleccion(numero_remision, fechaVisual){
+      const remision = await obtenerRemisionRecoleccionPorNumero(numero_remision)
+
+      if (fechaVisual) {
+        remision.fecha_emision = fechaVisual
+      }
+
+      try {
+        console.log("📄 Generando PDF de recolección para:", numero_remision)
+    
+        const url = `http://localhost:5173/vista-remision-recoleccion/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`
+    
+        const browser = await puppeteer.launch({ headless: true })
+        const page = await browser.newPage()
+    
+        await page.setViewport({ width: 1280, height: 900 })
+        await page.goto(url, { waitUntil: 'networkidle2' })
+    
+        await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
+    
+        await page.waitForFunction(() => {
+          const container = document.querySelector('#vista-remision-imme')
+          return container && container.innerText.length > 100
+        }, { timeout: 30000 })
+    
+        await page.addStyleTag({
+          content: `
+            #vista-remision-imme {
+              break-inside: auto;
+              page-break-inside: auto;
+              display: block;
+              overflow: visible;
+            }
+    
+            table, tr, td, th {
+              break-inside: auto !important;
+              page-break-inside: auto !important;
+            }
+    
+            thead {
+              display: table-header-group;
+            }
+    
+            tfoot {
+              display: table-footer-group;
+            }
+          `
+        })
+    
+        await new Promise(resolve => setTimeout(resolve, 1000))
+    
+        await page.evaluate(() => {
+          document.querySelector('button#confirmar-remision')?.remove()
+          document.querySelector('button#modificar-remision')?.remove()
+        })
+    
+        const pdfBuffer = await page.pdf({
+          format: 'letter',
+          printBackground: true,
+          preferCSSPageSize: true,
+          margin: { top: '5mm', right: '10mm', bottom: '5mm', left: '10mm' }
+        })
+    
+        await browser.close()
+    
+        console.log("✅ PDF de recolección generado:", numero_remision)
+        return Buffer.from(pdfBuffer)
+      } catch (error) {
+        console.error("❌ Error al generar el PDF de recolección:", error)
+        throw new Error("No se pudo generar el PDF de la remisión de recolección.")
+      }
     }
 }
 
