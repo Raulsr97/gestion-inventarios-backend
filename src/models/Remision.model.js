@@ -108,6 +108,12 @@ class Remision extends Model {
       as: 'impresoras'
     })
 
+    this.hasMany(models.RemisionImpresora, {
+      foreignKey: 'numero_remision',
+      as: 'relacion_impresoras'
+    });
+    
+
     this.belongsToMany(models.Toner, {
       through: 'remision_toners',
       foreignKey: 'numero_remision',

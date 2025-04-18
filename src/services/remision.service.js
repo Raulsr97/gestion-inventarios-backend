@@ -310,14 +310,38 @@ class RemisionService {
     }
 
     async subirEvidencia(numero_remision, nombreArchivo) {
+      const transaction = await sequelize.transaction()
+
       try {
         const remision = await models.Remision.findOne({
-          where: { numero_remision }
+          where: { numero_remision },
+          transaction
         })
 
         if (!remision) {
           throw new Error('Remision no encontrada')
         }
+
+        const impresorasAsociadas = await models.RemisionImpresora.findAll({
+          where: { numero_remision },
+          transaction
+        })
+        
+        // Actualizar cada impresora: ubicacion y fecha_entrega_final
+        await Promise.all(
+          impresorasAsociadas.map(async (impresora) => {
+            await models.Impresora.update(
+              {
+                ubicacion: 'Entregado',
+                fecha_entrega_final: new Date()
+              },
+              {
+                where: { serie: impresora.serie },
+                transaction
+              }
+            )
+          })
+        )
 
         // Actualizar la remision con el archivo y estado confirmado
         remision.remision_firmada = nombreArchivo
@@ -326,14 +350,42 @@ class RemisionService {
         remision.usuario_entrega = 'admin'
 
         await remision.save()
+        await transaction.commit()
 
         return remision
       } catch (error) {
+        await transaction.rollback()
         console.error("❌ Error al subir evidencia:", error.message)
         throw new Error("No se pudo actualizar la remisión con la evidencia")
       }
     }
 
+    async modificarFechaProgramada(numero_remision, nuevaFecha) {
+      try {
+        const remision = await models.Remision.findByPk(numero_remision)
+
+        if (!remision) {
+          throw new Error('La remision no existe')
+        }
+
+        if(remision.estado !== 'Pendiente') {
+          throw new Error("Solo se puede modificar la fecha de una remisión pendiente");
+        }
+
+        const nuevaFechaObj = new Date(`${nuevaFecha}T00:00:00Z`)
+        remision.fecha_programada = nuevaFechaObj
+
+        await remision.save()
+
+        return {
+          mensaje:"Fecha programada actualizada correctamente",
+          remision 
+        }
+      } catch (error) {
+        console.error("❌ Error al modificar fecha programada:", error.message);
+        throw new Error("No se pudo actualizar la fecha programada");
+      }
+    }
    
 }
 

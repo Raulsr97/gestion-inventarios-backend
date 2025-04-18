@@ -129,6 +129,21 @@ router.post('/:numero_remision/evidencia', uploadEvidencia.single('archivo'), as
   }
 })
 
+// Modificar la fecha programada de una remision de entrega
+router.patch('/:numero_remision/fecha-programada', async (req, res) => {
+  try {
+    const { numero_remision } = req.params
+    const { nuevaFecha } = req.body
+
+    const resultado = await remisionService.modificarFechaProgramada(numero_remision, nuevaFecha)
+
+    res.status(200).json(resultado)
+  } catch (error) {
+    console.error("❌ Error al modificar la fecha:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+})
+
 
 
 

@@ -52,7 +52,7 @@ const UnidadImagenSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
     },
-    fecha_ingreso: {
+    fecha_entrada: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW

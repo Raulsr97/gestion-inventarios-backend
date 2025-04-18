@@ -31,6 +31,17 @@ class ImpresoraService {
               as: 'accesorios',
               attributes: ['numero_parte'],
               through: { attributes: [] } // Evita que sequelize incluya los datos de la tabla intermedia 
+            },
+            {
+              model: models.RemisionImpresora,
+              as: 'relacion_impresoras',
+              include: [
+                {
+                  model: models.Remision,
+                  as: 'remision',
+                  attributes: ['numero_remision']
+                }
+              ]
             }
           ]
         });
@@ -149,7 +160,6 @@ class ImpresoraService {
       };
     }
   
-
     async contarPorProyecto() {
         console.log("🔹 Obteniendo stock agrupado por proyecto...");
 
@@ -182,27 +192,19 @@ class ImpresoraService {
         )
     }
 
-    async contarPorCliente () {
+    async contarPorTipoEnAlmacen () {
       const resultados = await models.Impresora.findAll({
         attributes: [
-          'cliente_id', 
-          [Sequelize.fn('COUNT', Sequelize.col('id')), 'cantidad']
+          'tipo', 
+          [Sequelize.fn('COUNT', Sequelize.col('serie')), 'cantidad']
         ],
-        where: { ubicacion: 'Almacén'},
-        group: ['cliente_id'],
-        include: [
-          {
-            model: models.Cliente,
-            as: 'cliente',
-            attributes: ['nombre']
-          }
-        ]
+        where: { ubicacion: 'Almacen'},
+        group: ['tipo'],
       })
 
       return resultados
-        .filter(item => item.cliente)
         .map(item => ({
-        cliente: item.cliente.nombre,
+        tipo: item.tipo,
         cantidad: item.getDataValue('cantidad')
         }))
     }
@@ -233,6 +235,27 @@ class ImpresoraService {
       })
 
       return { entradas, salidas }
+    }
+
+    async consultarImpresorasConRemision() {
+      const impresoras = await models.Impresora.findAll({
+        include: [
+          {
+            model: models.RemisionImpresora,
+            as: 'remision_impresoras',
+            required: false,
+            include: [
+              {
+                model: models.Remision,
+                as: 'remision',
+                attributes: ['numero_remision']
+              }
+            ]
+          }
+        ]
+      })
+
+      return impresoras
     }
 
 }

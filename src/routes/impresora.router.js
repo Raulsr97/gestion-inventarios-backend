@@ -10,6 +10,7 @@ router.get('/', async (req, res, next) => {
         const impresoras = await ImpresoraService.obtenerImpresoras();
         res.json(impresoras);
     } catch (error) {
+        console.log('❌ Error en /api/impresoras:', error);
         next(error);
     }
 });
@@ -25,9 +26,9 @@ router.get('/almacen-por-proyecto', async (req, res, next) => {
     }
 })
 
-router.get('/almacen-por-cliente', async (req, res, next) => {
+router.get('/almacen-por-tipo', async (req, res, next) => {
     try {
-        const datos = await ImpresoraService.contarPorCliente()
+        const datos = await ImpresoraService.contarPorTipoEnAlmacen()
         res.json(datos)
     } catch (error) {
        next(error) 

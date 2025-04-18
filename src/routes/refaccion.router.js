@@ -23,4 +23,23 @@ router.post('/', validatorHandler(crearRefaccionSchema, 'body'), async (req, res
     }
 });
 
+router.post('/registro-lote', async (req, res, next) => {
+    try {
+      const resultado = await RefaccionService.registrarLoteRefacciones(req.body);
+      res.status(201).json(resultado);
+    } catch (error) {
+      next(error);
+    }
+});
+
+router.get('/stock-agrupado', async (req, res) => {
+    try {
+        const data = await RefaccionService.obtenerStockAgrupado()
+        res.json(data)
+    } catch (error) {
+        console.error('❌ Error al obtener el stock agrupado:', error);
+        res.status(500).json({ error: 'Error interno del servidor.' });
+    }
+})
+
 module.exports = router;

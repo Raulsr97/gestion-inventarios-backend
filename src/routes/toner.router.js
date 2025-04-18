@@ -23,20 +23,35 @@ router.post('/', validatorHandler(crearTonerSchema, 'body'), async (req, res, ne
     }
 });
 
-router.post('/registrar-lote', async (req, res, next) => {
+// Registrar Lote
+router.post('/registro-lote', async (req, res, next) => {
     try {
-        const { modelo, cliente_id, series } = req.body;
-
-        if (!series || !Array.isArray(series) || series.length === 0) {
-            return res.status(400).json({ message: "Debe proporcionar al menos un número de serie." });
-        }
-
-        const resultado = await TonerService.registrarLote({ modelo, cliente_id, series });
-
-        res.status(201).json(resultado);
+      const resultado = await TonerService.registrarLoteToners(req.body);
+      res.status(201).json(resultado);
     } catch (error) {
-        next(error);
+      next(error);
     }
 });
+
+router.get('/almacen-por-tipo', async (req, res, next) => {
+    try {
+      const datos = await TonerService.contarPorTipoEnAlmacen();
+      res.json(datos);
+    } catch (error) {
+      next(error);
+    }
+});
+
+router.get('/movimientos-mes', async (req, res, next) => {
+    try {
+      const movimientos = await TonerService.obtenerMovimientosdelMes();
+      res.json(movimientos);
+    } catch (error) {
+      console.error("❌ Error al obtener movimientos del mes (Toner):", error);
+      res.status(500).json({ mensaje: "Error interno", error: error.message });
+    }
+});
+  
+  
 
 module.exports = router;

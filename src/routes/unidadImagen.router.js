@@ -3,6 +3,7 @@ const UnidadImagenService = require('../services/unidadImagen.service');
 const { crearUnidadImagenSchema } = require('../schemas/unidadImagen.schema');
 const validatorHandler = require('../../middlewares/validator.handler');
 
+
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
@@ -23,20 +24,31 @@ router.post('/', validatorHandler(crearUnidadImagenSchema, 'body'), async (req, 
     }
 });
 
-router.post('/registrar-lote', async (req, res, next) => {
+router.post('/registro-lote', async (req, res, next) => {
     try {
-        const { modelo, cliente_id, series } = req.body;
-
-        if (!series || !Array.isArray(series) || series.length === 0) {
-            return res.status(400).json({ message: "Debe proporcionar al menos un número de serie." });
-        }
-
-        const resultado = await UnidadImagenService.registrarLote({ modelo, cliente_id, series });
-
-        res.status(201).json(resultado);
+      const resultado = await UnidadImagenService.registrarLoteUnidadesImagen(req.body);
+      res.status(201).json(resultado);
     } catch (error) {
-        next(error);
+      next(error);
     }
 });
 
+router.get('/almacen-por-tipo', async (req, res, next) => {
+    try {
+      const datos = await UnidadImagenService.contarPorTipoEnAlmacen();
+      res.json(datos);
+    } catch (error) {
+      next(error);
+    }
+});
+
+router.get('/movimientos-mes', async (req, res, next) => {
+    try {
+      const movimientos = await UnidadImagenService.obtenerMovimientosdelMes();
+      res.json(movimientos);
+    } catch (error) {
+      next(error);
+    }
+});
+  
 module.exports = router;

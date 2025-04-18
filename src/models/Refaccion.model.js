@@ -10,6 +10,21 @@ const RefaccionSchema = {
     },
     numero_parte: {
         type: DataTypes.STRING,
+        allowNull: false,
+    },
+    marca_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'marcas',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      
+    tipo: {
+        type: DataTypes.ENUM('Compra', 'Distribucion'),
         allowNull: false
     },
     cantidad: {

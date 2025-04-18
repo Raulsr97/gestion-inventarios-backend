@@ -203,6 +203,33 @@ class RemisionRecoleccionService {
       throw new Error("No se pudo actualizar la remisión con la evidencia")
     }
   }
+
+  async modificarFechaProgramada(numero_remision, nuevaFecha) {
+    try {
+      const remision = await models.RemisionRecoleccion.findByPk(numero_remision)
+
+      if (!remision) {
+        throw new Error('La remision no existe')
+      }
+
+      if(remision.estado !== 'Pendiente') {
+        throw new Error("Solo se puede modificar la fecha de una remisión pendiente");
+      }
+
+      const nuevaFechaObj = new Date(`${nuevaFecha}T00:00:00Z`)
+      remision.fecha_programada = nuevaFechaObj
+
+      await remision.save()
+
+      return {
+        mensaje:"Fecha programada actualizada correctamente",
+        remision 
+      }
+    } catch (error) {
+      console.error("❌ Error al modificar fecha programada:", error.message);
+      throw new Error("No se pudo actualizar la fecha programada");
+    }
+  }
 }
 
 module.exports = new RemisionRecoleccionService()
