@@ -1,6 +1,6 @@
 const { models, sequelize } = require('../config/db')
 
-class RemisionService {
+class RemisionTonerService {
     async crearRemision(data) {
         const { numero_remision, empresa_id, cliente_id, proyecto_id, destinatario, direccion_entrega, notas, series, fecha_programada, usuario_creador } = data;
 
@@ -11,12 +11,12 @@ class RemisionService {
           const fecha_programada_obj = fecha_programada ? new Date(`${fecha_programada}T00:00:00Z`) : null
 
           // Validar que todas las series existen en la base de datos
-          const impresorasExistentes = await models.Impresora.findAll({
+          const tonersExistentes = await models.Toner.findAll({
             where: { serie: series },
             transaction
           })
 
-          if (impresorasExistentes.length !== series.length ) {
+          if (tonersExistentes.length !== series.length ) {
             throw new Error('Algunas series no existen en la base de datos')
           }
 
@@ -45,27 +45,15 @@ class RemisionService {
             usuario_creador
           }, { transaction })
 
-          console.log("📥 Datos recibidos en el backend:", {
-            numero_remision,
-            empresa_id,
-            cliente_id,
-            proyecto_id,
-            destinatario,
-            direccion_entrega,
-            notas,
-            fecha_programada,
-            usuario_creador
-          });
-
-          // Asociar las impresoras a la remisión y cambiar su ubicación a 'En tránsito'
+          // Asociar los toners a la remisión y cambiar su ubicación a 'En tránsito'
           await Promise.all(series.map(async (serie) => {
-            await models.RemisionImpresora.create({
+            await models.RemisionToner.create({
               numero_remision,
               serie
             }, { transaction })
 
             // Actualizar la ubicación de la impresora 
-            await models.Impresora.update(
+            await models.Toner.update(
               { 
                 ubicacion: 'En Tránsito',
                 fecha_salida: fecha_programada_obj,
@@ -75,12 +63,12 @@ class RemisionService {
             )
           }))
 
-          // 🔹 Actualizar cliente_id y proyecto_id en las impresoras que no lo tengan
-          await models.Impresora.update(
+          // 🔹 Actualizar cliente_id y proyecto_id en los toners que no lo tengan
+          await models.Toner.update(
             { 
                 cliente_id: cliente_id, 
-                proyecto_id: proyecto_id,
-                empresa_id 
+                proyecto_id: proyecto_id ,
+                empresa_id
             },
             { 
                 where: { 
@@ -118,24 +106,24 @@ class RemisionService {
         }
 
         // Obtener las impresoras asociadas a la remisión
-        const impresorasAsociadas = await models.RemisionImpresora.findAll({
+        const tonersAsociados = await models.RemisionToner.findAll({
           where: { numero_remision },
           transaction
         })
 
-        //Restaurar las impresoras a 'Almacen'
-        await Promise.all(impresorasAsociadas.map(async (impresora) => {
-          await models.Impresora.update(
+        //Restaurar los toners a 'Almacen'
+        await Promise.all(tonersAsociados.map(async (toner) => {
+          await models.Toner.update(
             { 
               ubicacion: 'Almacen', 
               fecha_salida: null
             },
-            { where: { serie: impresora.serie }, transaction}
+            { where: { serie: toner.serie }, transaction}
           )
         }))
 
         // Eliminar la relacion de la remision con las impresoras
-        await models.RemisionImpresora.destroy( { where: { numero_remision }, transaction})
+        await models.RemisionToner.destroy( { where: { numero_remision }, transaction})
 
         // Actualizar la remision a estado 'Cancelada'
         await remision.update(
@@ -178,19 +166,19 @@ class RemisionService {
         }
 
         // Obtener las impresoras asociadas a la remision
-        const impresorasAsociadas = await models.RemisionImpresora.findAll({
+        const tonersAsociados = await models.RemisionToner.findAll({
           where: { numero_remision },
           transaction
         })
 
         // Actualizar la ubicación a entregado
-        await Promise.all(impresorasAsociadas.map(async (impresora) => {
-          await models.Impresora.update(
+        await Promise.all(tonersAsociados.map(async (toner) => {
+          await models.Toner.update(
             { 
               ubicacion: 'Entregado',
               fecha_entrega_final: new Date()
             },
-            { where: { serie: impresora.serie}, transaction}
+            { where: { serie: toner.serie}, transaction}
           )
         }))
 
@@ -248,8 +236,8 @@ class RemisionService {
             attributes: ['id', 'nombre']
           },
           {
-            model: models.Impresora,
-            as: 'impresoras',
+            model: models.Toner,
+            as: 'toners',
             attributes: ['serie', 'modelo', 'estado', 'ubicacion']
           }
         ],
@@ -285,16 +273,11 @@ class RemisionService {
                 { model: models.Proyecto, as: "proyecto" },
                 { model: models.Empresa, as: "empresa" },
                 {
-                  model: models.Impresora,
-                  as: 'impresoras',
+                  model: models.Toner,
+                  as: 'toners',
                   through: { attributes: [] },
                   include: [
                     { model: models.Marca, as: 'marca'},
-                    {
-                      model: models.Accesorio,
-                      as: 'accesorios',
-                      through: { attributes: []}
-                    }
                   ]
                 }
             ]
@@ -324,21 +307,21 @@ class RemisionService {
           throw new Error('Remision no encontrada')
         }
 
-        const impresorasAsociadas = await models.RemisionImpresora.findAll({
+        const tonersAsociados = await models.RemisionToner.findAll({
           where: { numero_remision },
           transaction
         })
         
         // Actualizar cada impresora: ubicacion y fecha_entrega_final
         await Promise.all(
-          impresorasAsociadas.map(async (impresora) => {
-            await models.Impresora.update(
+          tonersAsociados.map(async (toner) => {
+            await models.Toner.update(
               {
                 ubicacion: 'Entregado',
                 fecha_entrega_final: new Date()
               },
               {
-                where: { serie: impresora.serie },
+                where: { serie: toner.serie },
                 transaction
               }
             )
@@ -391,5 +374,5 @@ class RemisionService {
    
 }
 
-module.exports = new RemisionService();
+module.exports = new RemisionTonerService();
 

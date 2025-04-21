@@ -1,11 +1,42 @@
 const puppeteer = require('puppeteer');
-const { obtenerRemisionPorNumero } = require('./remision.service');
+// Servicios para obtener remisiones según el tipo de producto
+const { obtenerRemisionPorNumero: obtenerRemisionImpresora } = require('./remision.service')
+const { obtenerRemisionPorNumero: obtenerRemisionToner } = require('./remisionToner.service')
+const { obtenerRemisionPorNumero: obtenerRemisionUnidadImagen } = require('./remisionUnidadImg.service')
+const { obtenerRemisionPorNumero: obtenerRemisionRefaccion} = require('./remisionRefaccion.service')
 const { obtenerRemisionPorNumero: obtenerRemisionRecoleccionPorNumero} = require('./remisionRecoleccion.service')
+
 
 class PDFService {
     async generarPdf(numero_remision, fechaVisual) {
-        const remision = await obtenerRemisionPorNumero(numero_remision)
-
+      let tipo = 'impresora';
+      let remision;
+      
+      try {
+        // Intentar con impresoras primero
+        remision = await obtenerRemisionImpresora(numero_remision);
+        if (remision.toners?.length > 0) tipo = 'toner';
+        else if (remision.unidades_imagen?.length > 0) tipo = 'unidad_imagen';
+      } catch (e) {
+        try {
+          remision = await obtenerRemisionToner(numero_remision);
+          tipo = 'toner';
+        } catch (e2) {
+          try {
+            remision = await obtenerRemisionUnidadImagen(numero_remision);
+            tipo = 'unidad_imagen';
+          } catch (e3) {
+            try {
+              remision = await obtenerRemisionRefaccion(numero_remision);
+              tipo = 'refaccion';
+            } catch (e4) {
+              throw new Error('No se pudo obtener la remisión con ningún tipo conocido.');
+            }
+          }
+        }
+      }
+      
+      
         // Si se recibe una fecha visual, reemplazamos temporalmente la fecha_emision
         if (fechaVisual) {
           remision.fecha_emision = fechaVisual
@@ -81,6 +112,7 @@ class PDFService {
           return Buffer.from(pdfBuffer)
         } catch (error) {
           console.error("❌ Error al generar el PDF:", error);
+          console.error("🧪 URL del puppeteer:", url); // <-- agrega esto
           throw new Error("No se pudo generar el PDF.");
         }
     }

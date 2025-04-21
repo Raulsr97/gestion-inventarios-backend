@@ -9,9 +9,14 @@ const marcaRoutes = require('./marca.router')
 const proveedorRoutes = require('./proveedor.router')
 const accesorioRoutes = require('./accesorio.router')
 const remisionRoutes = require('./remision.router')
+const remisionTonerRoutes = require('./remisionToner.router')
+const remisionUnidadImgRoutes = require('./remisionUnidadImg.router')
+const remisionRefaccionRoutes = require('../routes/remisionRefaccion.router')
 const empresaRouter = require('./empresa.router')
 const remisionRecoleccionRoutes = require('./remisionRecoleccion.router')
-const remisionConsultaRouter = require('./remisionConsulta.router')
+const remisionConsultaRouter = require('./remisionConsulta.router');
+
+
 
 function routerApi(app) {
     const router = express.Router();
@@ -26,6 +31,9 @@ function routerApi(app) {
     router.use('/proveedores', proveedorRoutes)
     router.use('/accesorios', accesorioRoutes)
     router.use('/remisiones', remisionRoutes)
+    router.use('/remisiones-toner', remisionTonerRoutes)
+    router.use('/remisiones-unidad-imagen', remisionUnidadImgRoutes)
+    router.use('/remisiones-refaccion', remisionRefaccionRoutes)
     router.use('/empresas', empresaRouter)
     router.use('/remisiones-recoleccion', remisionRecoleccionRoutes)
     router.use('/remisiones-consulta', remisionConsultaRouter)

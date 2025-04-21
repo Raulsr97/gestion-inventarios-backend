@@ -22,15 +22,9 @@ const RefaccionSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      
     tipo: {
         type: DataTypes.ENUM('Compra', 'Distribucion'),
         allowNull: false
-    },
-    cantidad: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1
     },
     cliente_id: {
         type: DataTypes.INTEGER,
@@ -52,16 +46,12 @@ const RefaccionSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
     },
-    fecha_ingreso: {
+    fecha_entrada: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
     },
     fecha_salida: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
-    fecha_entrega_final: {
         type: DataTypes.DATE,
         allowNull: true,
     },
@@ -95,12 +85,18 @@ class Refaccion extends Model {
         this.belongsTo(models.Empresa, { foreignKey: 'empresa_id', as: 'empresa'})
         this.belongsTo(models.Proveedor, {foreignKey: 'proveedor_id', as: 'proveedor'})
 
+        // Relacion con remisiones a traves de la tabla intermedia
         this.belongsToMany(models.Remision, {
             through: 'remision_refacciones',
             foreignKey: 'refaccion_id',
             otherKey: 'numero_remision',
             as: 'remisiones'
         })
+
+        this.hasMany(models.RemisionRefaccion, {
+            foreignKey: 'refaccion_id',
+            as: 'relacion_refacciones'
+        });
     }
 
     static config(sequelize) {

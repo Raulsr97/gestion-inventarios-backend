@@ -39,7 +39,10 @@ class RemisionesCombinadasService {
       include: [
         { model: models.Cliente, as: 'cliente', attributes: ['id', 'nombre']},
         { model: models.Proyecto, as: 'proyecto', attributes: ['id', 'nombre'] },
-        { model: models.Empresa, as: 'empresa', attributes: ['id', 'nombre'] }
+        { model: models.Empresa, as: 'empresa', attributes: ['id', 'nombre'] },
+        { model: models.Impresora, as: 'impresoras', attributes: ['serie'], through: { attributes: []} },
+        { model: models.Toner, as: 'toners', attributes: ['serie'], through: { attributes: []}  },
+        { model: models.UnidadImagen, as: 'unidadesimg', attributes: ['serie'], through: { attributes: []}  }
       ],
       order: [['fecha_emision', 'DESC']]
     })
@@ -57,7 +60,16 @@ class RemisionesCombinadasService {
 
     // Añadir tipo a cada remision para difereneciarla en el frontend
     const remisionesConTipo = [
-      ...remisionesEntrega.map(r => ({ ...r.toJSON(), tipo: 'entrega'})),
+      ...remisionesEntrega.map(r => {
+        const data = r.toJSON()
+        let categoria = null
+
+        if (data.toners?.length > 0) categoria = 'toner'
+        else if (data.unidadesimg?.length > 0) categoria = 'unidad_imagen';
+        else if (data.impresoras?.length > 0) categoria = 'impresora';
+
+        return { ...data, tipo: 'entrega', categoria }
+      }),
       ...remisionesRecoleccion.map(r => ({ ...r.toJSON(), tipo: 'recoleccion' }))
     ]
 

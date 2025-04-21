@@ -30,7 +30,7 @@ const RemisionTonerSchema = {
 class RemisionToner extends Model {
     static associate(models) {
         this.belongsTo(models.Remision, { foreignKey: 'numero_remision', as: 'remision' })
-        this.belongsTo(models.Impresora, { foreignKey: 'serie', as: 'toner' })
+        this.belongsTo(models.Toner, { foreignKey: 'serie', as: 'toner' })
     }
 
     static config(sequelize) {

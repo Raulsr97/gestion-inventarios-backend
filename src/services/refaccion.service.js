@@ -1,7 +1,8 @@
-const { models } = require('../config/db');
+const { models, sequelize } = require('../config/db');
+
 
 class RefaccionService {
-  async obtenerRefacciones() {
+  async obtenerRefaccionesEnAlmacen() {
     return await models.Refaccion.findAll();
   }
 
@@ -53,8 +54,9 @@ class RefaccionService {
       proveedor = await models.Proveedor.findOne({ where: { id: proveedor_id } });
       if (!proveedor) throw new Error('El proveedor seleccionado no existe.');
     }
+
+    let totalRegistradas = 0
   
-    // Registrar refacciones (cada una como fila nueva)
     for (const ref of refacciones) {
       const numero_parte = ref.numero_parte.toUpperCase().trim();
       const cantidad = parseInt(ref.cantidad);
@@ -62,25 +64,61 @@ class RefaccionService {
       if (!numero_parte || isNaN(cantidad) || cantidad <= 0) {
         throw new Error(`Datos inválidos para número de parte: "${numero_parte}"`);
       }
-  
-      await models.Refaccion.create({
+
+      // Crear tantas filas como inidique la cantidad
+      const nuevasRefacciones = Array.from({ length: cantidad }, () => ({
         numero_parte,
-        cantidad,
         tipo,
         marca_id: marca?.id || null,
         proveedor_id: proveedor?.id || null,
         cliente_id: cliente?.id || null,
         proyecto_id: proyecto?.id || null,
         empresa_id: empresa_id || null,
-        fecha_ingreso: new Date()
-      });
+        fecha_entrada: new Date()
+      }))
+  
+      await models.Refaccion.bulkCreate(nuevasRefacciones)
+      totalRegistradas += cantidad
     }
   
     return {
       mensaje: 'Refacciones registradas correctamente.',
-      total: refacciones.length
+      total: totalRegistradas
     };
   }
+
+  async obtenerRefaccionesDisponiblesParaRemision() {
+    const [result] = await sequelize.query(`
+      SELECT
+        r.numero_parte,
+        r.tipo,
+        r.marca_id,
+        CASE WHEN r.tipo = 'Distribucion' THEN r.cliente_id ELSE 0 END AS cliente_id,
+        CASE WHEN r.tipo = 'Distribucion' THEN r.proyecto_id ELSE 0 END AS proyecto_id,
+        c.nombre AS cliente_nombre,
+        p.nombre AS proyecto_nombre,
+        COUNT(*) AS cantidad
+      FROM refacciones r
+      LEFT JOIN clientes c ON r.cliente_id = c.id
+      LEFT JOIN proyectos p ON r.proyecto_id = p.id
+      WHERE r.fecha_salida IS NULL
+        AND r.tipo IN ('Compra', 'Distribucion')
+      GROUP BY
+        r.numero_parte,
+        r.tipo,
+        r.marca_id,
+        cliente_id,
+        proyecto_id,
+        cliente_nombre,
+        proyecto_nombre
+    `);
+  
+    return result;
+  }
+  
+  
+  
+  
 
   async obtenerStockAgrupado() {
     const refacciones = await models.Refaccion.findAll({

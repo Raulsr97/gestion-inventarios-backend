@@ -121,6 +121,11 @@ class Remision extends Model {
       as: 'toners'
     })
 
+    this.hasMany(models.RemisionToner, {
+      foreignKey: 'numero_remision',
+      as: 'relacion_toners'
+    });
+
     this.belongsToMany(models.UnidadImagen, {
       through: 'remision_unidadesimg',
       foreignKey: 'numero_remision',
@@ -128,12 +133,22 @@ class Remision extends Model {
       as: 'unidadesimg'
     })
 
+    this.hasMany(models.RemisionUnidadImg, {
+      foreignKey: 'numero_remision',
+      as: 'relacion_unidadesimg'
+    });
+
     this.belongsToMany(models.Refaccion, {
       through: 'remision_refacciones',
       foreignKey: 'numero_remision',
       otherKey: 'refaccion_id',
       as: 'refacciones'
-  })
+    })
+
+    this.hasMany(models.RemisionRefaccion, {
+      foreignKey: 'numero_remision',
+      as: 'relacion_refacciones'
+    });
   }
 
   static config(sequelize) {

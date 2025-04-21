@@ -25,6 +25,17 @@ class UnidadImagenService {
                 as: 'proveedor',
                 attributes: ['nombre']
             },
+            {
+              model: models.RemisionUnidadImg,
+              as: 'relacion_unidadesimg',
+              include: [
+                {
+                  model: models.Remision,
+                  as: 'remision',
+                  attributes: ['numero_remision']
+                }
+              ]
+            }
            ] 
         });
     }

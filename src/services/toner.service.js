@@ -25,6 +25,17 @@ class TonerService {
                 as: 'proveedor',
                 attributes: ['nombre']
             },
+            {
+              model: models.RemisionToner,
+              as: 'relacion_toners',
+              include: [
+                {
+                  model: models.Remision,
+                  as: 'remision',
+                  attributes: ['numero_remision']
+                }
+              ]
+            }
            ] 
         })
     }

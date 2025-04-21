@@ -28,7 +28,7 @@ const UnidadImagenSchema = {
         allowNull: false
     },
     ubicacion: {
-        type: DataTypes.ENUM('Almacen', 'Cliente', 'Devuelto al proveedor'),
+        type: DataTypes.ENUM('Almacen', 'Entregado', 'En Tránsito', 'Devuelto al proveedor'),
         allowNull: false,
         defaultValue: 'Almacen'
     },
@@ -100,6 +100,11 @@ class UnidadImagen extends Model {
             foreignKey: 'serie',
             otherKey: 'numero_remision',
             as: 'remisiones'
+        })
+
+        this.hasMany(models.RemisionUnidadImg, {
+            foreignKey: 'serie',
+            as: 'relacion_unidadesimg'
         })
     }
 

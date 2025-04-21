@@ -30,7 +30,7 @@ const RemisionUnidadImgSchema = {
 class RemisionUnidadImg extends Model {
     static associate(models) {
         this.belongsTo(models.Remision, { foreignKey: 'numero_remision', as: 'remision' })
-        this.belongsTo(models.Impresora, { foreignKey: 'serie', as: 'unidadimg' })
+        this.belongsTo(models.UnidadImagen, { foreignKey: 'serie', as: 'unidadimg' })
     }
 
     static config(sequelize) {

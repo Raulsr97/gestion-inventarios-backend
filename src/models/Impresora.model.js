@@ -137,7 +137,7 @@ class Impresora extends Model {
         this.hasMany(models.RemisionImpresora, {
             foreignKey: 'serie',
             as: 'relacion_impresoras'
-          });
+        });
           
 
         this.belongsToMany(models.Accesorio, {

@@ -5,10 +5,13 @@ const { REFACCION_TABLE } = require('../src/models/Refaccion.model');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.renameColumn(REFACCION_TABLE, 'marca', 'marca_id')
+    await queryInterface.removeColumn(REFACCION_TABLE, 'fecha_entrega_final')
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.renameColumn(REFACCION_TABLE, 'marca_id', 'marca')
+    await queryInterface.addColumn(REFACCION_TABLE, 'fecha_entrega_final', {
+      type: Sequelize.DATE,
+      allowNull: true,
+    });
   }
 };

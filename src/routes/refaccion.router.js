@@ -32,6 +32,16 @@ router.post('/registro-lote', async (req, res, next) => {
     }
 });
 
+router.get('/disponibles-remision', async (req, res, next) => {
+    try {
+      const resultado = await RefaccionService.obtenerRefaccionesDisponiblesParaRemision();
+      res.json(resultado);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+
 router.get('/stock-agrupado', async (req, res) => {
     try {
         const data = await RefaccionService.obtenerStockAgrupado()
