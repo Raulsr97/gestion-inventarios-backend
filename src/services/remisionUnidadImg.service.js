@@ -116,11 +116,15 @@ class RemisionUnidadImgService {
 
 
         //Restaurar los toners a 'Almacen'
-        await Promise.all(unidadesImgAsociadas.map(async (unidadImg) => {
-          await models.UnidadImagen.update(
+        await Promise.all(unidadesImgAsociadas.map(async (ui) => {
+          const unidadImg = await models.UnidadImagen.findByPk(ui.serie, { transaction })
+
+          await unidadImg.update(
             { 
               ubicacion: 'Almacen', 
-              fecha_salida: null
+              fecha_salida: null,
+              empresa_id: null,
+              cliente_id: unidadImg.tipo === 'Compra' ? null : unidadImg.cliente_id
             },
             { where: { serie: unidadImg.serie }, transaction}
           )

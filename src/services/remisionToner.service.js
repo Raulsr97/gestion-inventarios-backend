@@ -105,18 +105,22 @@ class RemisionTonerService {
           throw new Error('Solo se pueden cancelar remisiones en estado Pendiente')
         }
 
-        // Obtener las impresoras asociadas a la remisión
+        // Obtener las toners asociadas a la remisión
         const tonersAsociados = await models.RemisionToner.findAll({
           where: { numero_remision },
           transaction
         })
 
         //Restaurar los toners a 'Almacen'
-        await Promise.all(tonersAsociados.map(async (toner) => {
-          await models.Toner.update(
+        await Promise.all(tonersAsociados.map(async (t) => {
+          const toner = await models.Toner.findByPk(t.serie, { transaction })
+
+          await toner.update(
             { 
               ubicacion: 'Almacen', 
-              fecha_salida: null
+              fecha_salida: null,
+              empresa_id: null,
+              cliente_id: toner.tipo === 'Compra' ? null : toner.cliente_id
             },
             { where: { serie: toner.serie }, transaction}
           )

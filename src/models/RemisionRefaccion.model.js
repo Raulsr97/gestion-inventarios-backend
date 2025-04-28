@@ -36,7 +36,7 @@ const RemisionRefaccionSchema = {
 class RemisionRefaccion extends Model {
     static associate(models) {
         this.belongsTo(models.Remision, { foreignKey: 'numero_remision', as: 'remision' })
-        this.belongsTo(models.Remision, { foreignKey: 'refaccion_id', as: 'refaccion' })
+        this.belongsTo(models.Refaccion, { foreignKey: 'refaccion_id', as: 'refaccion' })
     }
 
     static config(sequelize) {

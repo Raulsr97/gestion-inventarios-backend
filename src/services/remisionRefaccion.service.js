@@ -76,6 +76,66 @@ class remisionRefaccionService {
    
   }
 
+  async cancelarRemision(numero_remision, usuario_cancelacion) {
+    const transaction = await sequelize.transaction()
+
+    try {
+      const remision = await models.Remision.findByPk(numero_remision, { transaction })
+
+      if (!remision) {
+        throw new Error('La remision no existe')
+      }
+
+      // Solo permitimos cancelar remisiones en estado 'Pendiente'
+      if (remision.estado != 'Pendiente') {
+        throw new Error('Solo se pueden cancelar remisiones en estado Pendiente')
+      }
+
+      // Obtener las refacciones asociadas a la remisión
+      const refaccionesAsociadas = await models.RemisionRefaccion.findAll({
+        where: { numero_remision },
+        transaction
+      })
+
+      //Restaurar las refacciones a 'Almacen'
+      await Promise.all(refaccionesAsociadas.map(async (r) => {
+        const refaccion = await models.Refaccion.findByPk(r.refaccion_id, { transaction })
+
+        await refaccion.update(
+          { 
+            ubicacion: 'Almacen',        
+            fecha_salida: null,
+            empresa_id: null,
+            cliente_id: refaccion.tipo === 'Compra' ? null : refaccion.cliente_id
+          },
+          { where: { id: refaccion.refaccion_id }, transaction}
+        )
+      }))
+
+      // Eliminar la relacion de la remision con las impresoras
+      await models.RemisionRefaccion.destroy( { where: { numero_remision }, transaction})
+
+      // Actualizar la remision a estado 'Cancelada'
+      await remision.update(
+        {
+          estado: 'Cancelada',
+          cancelada_por: usuario_cancelacion,
+          fecha_cancelacion: new Date() 
+        },
+        { transaction }
+      )
+
+      // Confirmar la transacción si todo salió bien
+      await transaction.commit();
+      return { mensaje: 'Remisión cancelada con éxito' };
+
+  } catch (error) {
+      // Si algo falla, revertimos los cambios
+      await transaction.rollback();
+      throw new Error('Error al cancelar la remisión: ' + error.message);
+  }
+  }
+
   async obtenerRemisionPorNumero(numero_remision) {
     try {
       const remision = await models.Remision.findOne({
@@ -106,7 +166,142 @@ class remisionRefaccionService {
     }
   }
   
+  async confirmarEntregaRemision(numero_remision, usuario_entrega, remision_firmada) {
+    const transaction = await sequelize.transaction()
+
+    try {
+      const remision = await models.Remision.findByPk(numero_remision, { transaction })
+
+      if(!remision) {
+        throw new Error('La remision no existe')
+      }
+
+      // Solo se pueden confirmar remisiones en estado "Pendiente"
+      if (remision.estado !== 'Pendiente') {
+        throw new Error('Solo se pueden confirmar remisiones en estado Pendiente');
+      }
+
+      if (!remision_firmada) {
+        throw new Error('Se requiere el archivo de remisión firmada para confirmar.');
+      }
+
+      // Obtener las impresoras asociadas a la remision
+      const refaccionesAsociadasAsociados = await models.RemisionRefaccion.findAll({
+        where: { numero_remision },
+        transaction
+      })
+
+      // Actualizar la ubicación a entregado
+      await Promise.all(refaccionesAsociadasAsociados.map(async (refaccion) => {
+        await models.Refaccion.update(
+          { 
+            ubicacion: 'Entregado',
+            fecha_entrega_final: new Date()
+          },
+          { where: { id: refaccion.refaccion_id}, transaction}
+        )
+      }))
+
+      // Actualizar la remisión a estado "Confirmada"
+      await remision.update(
+        {
+          estado: 'Confirmada',
+          usuario_entrega,
+          fecha_entrega: new Date(),
+          remision_firmada
+        },
+        { transaction }
+      )
+
+      // Confirmar la transacción si todo salió bien
+      await transaction.commit();
+      return { mensaje: 'Entrega confirmada con éxito' };
+    
+    } catch (error) {
+       // Si algo falla, revertimos los cambios
+      await transaction.rollback();
+      throw new Error('Error al confirmar la entrega: ' + error.message);
+    }
+
+  }
+
+  async subirEvidencia(numero_remision, nombreArchivo) {
+        const transaction = await sequelize.transaction()
   
+        try {
+          const remision = await models.Remision.findOne({
+            where: { numero_remision },
+            transaction
+          })
+  
+          if (!remision) {
+            throw new Error('Remision no encontrada')
+          }
+  
+          const refaccionesAsociadas = await models.RemisionRefaccion.findAll({
+            where: { numero_remision },
+            transaction
+          })
+          
+          // Actualizar cada impresora: ubicacion y fecha_entrega_final
+          await Promise.all(
+            refaccionesAsociadas.map(async (refaccion) => {
+              await models.Refaccion.update(
+                {
+                  ubicacion: 'Entregado',
+                  fecha_entrega_final: new Date()
+                },
+                {
+                  where: { id: refaccion.refaccion_id },
+                  transaction
+                }
+              )
+            })
+          )
+  
+          // Actualizar la remision con el archivo y estado confirmado
+          remision.remision_firmada = nombreArchivo
+          remision.estado = 'Confirmada'
+          remision.fecha_entrega = new Date()
+          remision.usuario_entrega = 'admin'
+  
+          await remision.save()
+          await transaction.commit()
+  
+          return remision
+        } catch (error) {
+          await transaction.rollback()
+          console.error("❌ Error al subir evidencia:", error.message)
+          throw new Error("No se pudo actualizar la remisión con la evidencia")
+        }
+  }
+
+  async modificarFechaProgramada(numero_remision, nuevaFecha) {
+      try {
+        const remision = await models.Remision.findByPk(numero_remision)
+
+        if (!remision) {
+          throw new Error('La remision no existe')
+        }
+
+        if(remision.estado !== 'Pendiente') {
+          throw new Error("Solo se puede modificar la fecha de una remisión pendiente");
+        }
+
+        const nuevaFechaObj = new Date(`${nuevaFecha}T00:00:00Z`)
+        remision.fecha_programada = nuevaFechaObj
+
+        await remision.save()
+
+        return {
+          mensaje:"Fecha programada actualizada correctamente",
+          remision 
+        }
+      } catch (error) {
+        console.error("❌ Error al modificar fecha programada:", error.message);
+        throw new Error("No se pudo actualizar la fecha programada");
+      }
+  }
   
 }
 

@@ -52,4 +52,47 @@ router.get('/stock-agrupado', async (req, res) => {
     }
 })
 
+// GET /refacciones/historial-entradas
+router.get('/historial-entradas', async (req, res, next) => {
+    try {
+      const mes = req.query.mes;
+      const resultado = await RefaccionService.obtenerHistorialEntradasAgrupado(mes);
+      res.json(resultado);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+// GET /refacciones/historial-salidas
+router.get('/historial-salidas', async (req, res, next) => {
+  try {
+    const mes = req.query.mes;
+    const resultado = await RefaccionService.obtenerHistorialSalidasRefacciones(mes);
+    res.json(resultado);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/historial-entradas/meses', async (req, res, next) => {
+  try {
+    const resultado = await RefaccionService.obtenerMesesDisponiblesEntradas();
+    res.json(resultado);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get('/historial-salidas/meses', async (req, res, next) => {
+  try {
+    const meses = await RefaccionService.obtenerMesesDisponiblesSalidas();
+    res.json(meses);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
 module.exports = router;

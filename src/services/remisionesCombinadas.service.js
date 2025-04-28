@@ -42,7 +42,8 @@ class RemisionesCombinadasService {
         { model: models.Empresa, as: 'empresa', attributes: ['id', 'nombre'] },
         { model: models.Impresora, as: 'impresoras', attributes: ['serie'], through: { attributes: []} },
         { model: models.Toner, as: 'toners', attributes: ['serie'], through: { attributes: []}  },
-        { model: models.UnidadImagen, as: 'unidadesimg', attributes: ['serie'], through: { attributes: []}  }
+        { model: models.UnidadImagen, as: 'unidadesimg', attributes: ['serie'], through: { attributes: []}  },
+        { model: models.Refaccion, as: 'refacciones', attributes: ['id'], through: { attributes: []}}
       ],
       order: [['fecha_emision', 'DESC']]
     })
@@ -53,7 +54,7 @@ class RemisionesCombinadasService {
       include: [
         { model: models.Cliente, as: 'cliente', attributes: ['id', 'nombre'] },
         { model: models.Proyecto, as: 'proyecto', attributes: ['id', 'nombre'] },
-        { model: models.Empresa, as: 'empresa', attributes: ['id', 'nombre'] }
+        { model: models.Empresa, as: 'empresa', attributes: ['id', 'nombre'] },
       ],
       order: [['fecha_emision', 'DESC']]
     })
@@ -67,6 +68,7 @@ class RemisionesCombinadasService {
         if (data.toners?.length > 0) categoria = 'toner'
         else if (data.unidadesimg?.length > 0) categoria = 'unidad_imagen';
         else if (data.impresoras?.length > 0) categoria = 'impresora';
+        else if (data.refacciones?.length > 0) categoria = 'refaccion' 
 
         return { ...data, tipo: 'entrega', categoria }
       }),

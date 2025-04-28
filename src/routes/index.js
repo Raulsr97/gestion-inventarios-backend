@@ -15,12 +15,14 @@ const remisionRefaccionRoutes = require('../routes/remisionRefaccion.router')
 const empresaRouter = require('./empresa.router')
 const remisionRecoleccionRoutes = require('./remisionRecoleccion.router')
 const remisionConsultaRouter = require('./remisionConsulta.router');
+const dashboardRoutes = require('./dashboard.router')
 
 
 
 function routerApi(app) {
     const router = express.Router();
     app.use('/api', router);
+    router.use('/dashboard', dashboardRoutes);
     router.use('/clientes', clienteRoutes);
     router.use('/proyectos', proyectoRoutes);
     router.use('/impresoras', impresoraRoutes);

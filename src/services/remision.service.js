@@ -124,11 +124,15 @@ class RemisionService {
         })
 
         //Restaurar las impresoras a 'Almacen'
-        await Promise.all(impresorasAsociadas.map(async (impresora) => {
-          await models.Impresora.update(
+        await Promise.all(impresorasAsociadas.map(async (i) => {
+          const impresora = await models.Impresora.findByPk(i.serie, { transaction })
+
+          await impresora.update(
             { 
               ubicacion: 'Almacen', 
-              fecha_salida: null
+              fecha_salida: null,
+              empresa_id: null,
+              cliente_id: impresora.tipo === 'Compra' ? null : impresora.cliente_id
             },
             { where: { serie: impresora.serie }, transaction}
           )
