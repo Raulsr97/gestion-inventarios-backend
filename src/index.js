@@ -14,7 +14,18 @@ const PORT = process.env.PORT || 3000;
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Middlewares
-app.use(cors());
+const allowedOrigins = ['https://gestion-inventarios-frontend-production.up.railway.app']
+app.use(cors({
+   origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+         callback(null, true)
+      } else {
+         callback(new Error('Not allowed by CORS'))
+      }
+   },
+   credentials: true
+}));
+
 app.use(express.json()); // Ya no necesitamos body-parser
 
 // Rutas
