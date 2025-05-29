@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const { puppeteer, launchOptions } = require('../../utils/puppeteer');
 // Servicios para obtener remisiones según el tipo de producto
 const { obtenerRemisionPorNumero: obtenerRemisionImpresora } = require('./remision.service')
 const { obtenerRemisionPorNumero: obtenerRemisionToner } = require('./remisionToner.service')
@@ -44,10 +44,14 @@ class PDFService {
 
         try {
           console.log("📄 Número de remisión recibido en servicio PDF:", numero_remision);
-          const url = `http://localhost:5173/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`
+          const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+          const url = `${frontendUrl}/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`;
 
 
-          const browser = await puppeteer.launch({ headless: true })
+
+          const browser = await puppeteer.launch(
+            typeof launchOptions === 'function' ? await launchOptions() : launchOptions
+          )
           const page = await browser.newPage()
 
           // Configurar página
@@ -127,9 +131,12 @@ class PDFService {
       try {
         console.log("📄 Generando PDF de recolección para:", numero_remision)
     
-        const url = `http://localhost:5173/vista-remision-recoleccion/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const url = `${frontendUrl}/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`;
     
-        const browser = await puppeteer.launch({ headless: true })
+        const browser = await puppeteer.launch(
+          typeof launchOptions === 'function' ? await launchOptions() : launchOptions
+        )
         const page = await browser.newPage()
     
         await page.setViewport({ width: 1280, height: 900 })
