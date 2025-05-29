@@ -8,11 +8,11 @@ if (isProduction) {
   puppeteer = require('puppeteer-core');
   const chromium = require('chrome-aws-lambda');
 
-  launchOptions = {
-    args: chromium.args,
-    executablePath: async () => await chromium.executablePath || '/usr/bin/chromium-browser',
+  launchOptions = async () => ({
+    args: [...chromium.args, '--no-sandbox'],
+    executablePath: await chromium.executablePath,
     headless: chromium.headless,
-  };
+  }) 
 } else {
   // En desarrollo usamos puppeteer normal
   puppeteer = require('puppeteer');

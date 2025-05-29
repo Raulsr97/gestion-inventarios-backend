@@ -116,7 +116,7 @@ class PDFService {
           return Buffer.from(pdfBuffer)
         } catch (error) {
           console.error("❌ Error al generar el PDF:", error);
-          console.error("🧪 URL del puppeteer:", url); // <-- agrega esto
+          console.error("🧪 URL del puppeteer:", typeof url !== 'undefined' ? url : 'No disponible');
           throw new Error("No se pudo generar el PDF.");
         }
     }
