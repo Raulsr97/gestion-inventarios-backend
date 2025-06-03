@@ -49,9 +49,7 @@ class PDFService {
 
 
 
-          const browser = await puppeteer.launch(
-            typeof launchOptions === 'function' ? await launchOptions() : launchOptions
-          )
+          const browser = await puppeteer.launch(launchOptions);
           const page = await browser.newPage()
 
           // Configurar página
@@ -134,9 +132,7 @@ class PDFService {
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         const url = `${frontendUrl}/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`;
     
-        const browser = await puppeteer.launch(
-          typeof launchOptions === 'function' ? await launchOptions() : launchOptions
-        )
+        const browser = await puppeteer.launch(launchOptions);
         const page = await browser.newPage()
     
         await page.setViewport({ width: 1280, height: 900 })
