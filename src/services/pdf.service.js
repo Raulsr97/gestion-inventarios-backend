@@ -91,7 +91,7 @@ class PDFService {
           });
 
           // Espera adicional para asegurar que todo se aplique
-          await new Promise(resolve => setTimeout(resolve, 1000))
+          await new Promise(resolve => setTimeout(resolve, 3000))
 
 
           // Ocultar botones de confirmacion y modificacion 
@@ -169,7 +169,7 @@ class PDFService {
           `
         })
     
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 3000))
     
         await page.evaluate(() => {
           document.querySelector('button#confirmar-remision')?.remove()
