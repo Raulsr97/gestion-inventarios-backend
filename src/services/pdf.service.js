@@ -93,6 +93,9 @@ class PDFService {
           // Espera adicional para asegurar que todo se aplique
           await new Promise(resolve => setTimeout(resolve, 3000))
 
+          const htmlContent = await page.content();
+          console.log('🧪 HTML capturado por Puppeteer:\n', htmlContent.slice(0, 2000)); // solo imprimimos una parte para no llenar los logs
+
 
           // Ocultar botones de confirmacion y modificacion 
           await page.evaluate(() => {
@@ -170,12 +173,15 @@ class PDFService {
         })
     
         await new Promise(resolve => setTimeout(resolve, 3000))
+
+        const htmlContent = await page.content();
+        console.log('🧪 HTML capturado por Puppeteer:\n', htmlContent.slice(0, 2000)); // solo imprimimos una parte para no llenar los logs
     
         await page.evaluate(() => {
           document.querySelector('button#confirmar-remision')?.remove()
           document.querySelector('button#modificar-remision')?.remove()
         })
-    
+
         const pdfBuffer = await page.pdf({
           format: 'letter',
           printBackground: true,
