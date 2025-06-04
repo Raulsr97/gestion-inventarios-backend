@@ -103,6 +103,11 @@ class PDFService {
             document.querySelector('button#modificar-remision')?.remove()
           })
 
+          const screenshotBuffer = await page.screenshot({ fullPage: true });
+          const screenshotBase64 = screenshotBuffer.toString('base64');
+          console.log('🖼️ Screenshot base64 (copia y pega en navegador):\n');
+          console.log(`data:image/png;base64,${screenshotBase64}`);
+
           // Generar PDF con ajustes
           const pdfBuffer = await page.pdf({
             format: 'letter',
@@ -181,6 +186,11 @@ class PDFService {
           document.querySelector('button#confirmar-remision')?.remove()
           document.querySelector('button#modificar-remision')?.remove()
         })
+
+        const screenshotBuffer = await page.screenshot({ fullPage: true });
+        const screenshotBase64 = screenshotBuffer.toString('base64');
+        console.log('🖼️ Screenshot base64 (copia y pega en navegador):\n');
+        console.log(`data:image/png;base64,${screenshotBase64}`);
 
         const pdfBuffer = await page.pdf({
           format: 'letter',
