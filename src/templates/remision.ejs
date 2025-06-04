@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Remisión <%= numero_remision %></title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      font-size: 12px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Remisión: <%= numero_remision %></h1>
+  <p>Cliente: <%= remision.cliente?.nombre || '---' %></p>
+  <p>Fecha: <%= remision.fecha_emision %></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>N° Serie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% remision.impresoras?.forEach((item) => { %>
+        <tr>
+          <td><%= item.marca?.nombre || '' %></td>
+          <td><%= item.modelo?.nombre || '' %></td>
+          <td><%= item.numero_serie %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
