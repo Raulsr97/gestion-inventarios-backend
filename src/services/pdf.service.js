@@ -1,5 +1,3 @@
-const ejs = require('ejs')
-const path = require('path')
 const { puppeteer, launchOptions } = require('../../utils/puppeteer');
 // Servicios para obtener remisiones según el tipo de producto
 const { obtenerRemisionPorNumero: obtenerRemisionImpresora } = require('./remision.service')
@@ -49,15 +47,6 @@ class PDFService {
           const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
           const url = `${frontendUrl}/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`;
 
-          // Ruta absoluta al archivo EJS
-          const plantillaPath = path.join(__dirname, '../templates/remision.ejs');
-
-          // Renderizar HTML desde la plantilla
-          const html = await ejs.renderFile(plantillaPath, {
-            numero_remision,
-            remision,
-          });
-
           const browser = await puppeteer.launch(launchOptions);
           const page = await browser.newPage()
 
@@ -65,15 +54,15 @@ class PDFService {
           await page.setViewport({ width: 1280, height: 900 })
 
           // Navegar a la vista previa
-          await page.setContent(html, { waitUntil: 'networkidle0' });
+          await page.goto(url, { waitUntil: 'networkidle2' });
           
-          // await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
+          await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
 
           // Esperar que tenga contenido visible
-          // await page.waitForFunction(() => {
-          //   const container = document.querySelector('#vista-remision-imme')
-          //   return container && container.innerText.length > 100
-          // }, { timeout: 30000 })
+          await page.waitForFunction(() => {
+            const el = document.querySelector('#vista-remision-imme');
+            return el && el.offsetHeight > 0 && el.innerText.length > 100;
+          }, { timeout: 30000 });
 
           
           await page.addStyleTag({
@@ -108,10 +97,10 @@ class PDFService {
 
 
           // Ocultar botones de confirmacion y modificacion 
-          // await page.evaluate(() => {
-          //   document.querySelector('button#confirmar-remision')?.remove()
-          //   document.querySelector('button#modificar-remision')?.remove()
-          // })
+          await page.evaluate(() => {
+            document.querySelector('button#confirmar-remision')?.remove()
+            document.querySelector('button#modificar-remision')?.remove()
+          })
 
           const screenshotBuffer = await page.screenshot({ fullPage: true });
           const screenshotBase64 = screenshotBuffer.toString('base64');
@@ -150,27 +139,19 @@ class PDFService {
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         const url = `${frontendUrl}/vista-remision/${numero_remision}?fecha=${encodeURIComponent(fechaVisual || "")}`;
 
-        // Ruta absoluta al archivo EJS
-          const plantillaPath = path.join(__dirname, '../templates/remision.ejs');
-
-          // Renderizar HTML desde la plantilla
-          const html = await ejs.renderFile(plantillaPath, {
-            numero_remision,
-            remision,
-          });
-    
         const browser = await puppeteer.launch(launchOptions);
         const page = await browser.newPage()
     
         await page.setViewport({ width: 1280, height: 900 })
-        await page.setContent(html, { waitUntil: 'networkidle0' });
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
     
-        // await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
+        await page.waitForSelector('#vista-remision-imme', { timeout: 30000 })
     
-        // await page.waitForFunction(() => {
-        //   const container = document.querySelector('#vista-remision-imme')
-        //   return container && container.innerText.length > 100
-        // }, { timeout: 30000 })
+         await page.waitForFunction(() => {
+            const el = document.querySelector('#vista-remision-imme');
+            return el && el.offsetHeight > 0 && el.innerText.length > 100;
+         }, { timeout: 30000 });
     
         await page.addStyleTag({
           content: `
@@ -201,10 +182,10 @@ class PDFService {
         const htmlContent = await page.content();
         console.log('🧪 HTML capturado por Puppeteer:\n', htmlContent.slice(0, 2000)); // solo imprimimos una parte para no llenar los logs
     
-        // await page.evaluate(() => {
-        //   document.querySelector('button#confirmar-remision')?.remove()
-        //   document.querySelector('button#modificar-remision')?.remove()
-        // })
+        await page.evaluate(() => {
+          document.querySelector('button#confirmar-remision')?.remove()
+          document.querySelector('button#modificar-remision')?.remove()
+        })
 
         const screenshotBuffer = await page.screenshot({ fullPage: true });
         const screenshotBase64 = screenshotBuffer.toString('base64');
